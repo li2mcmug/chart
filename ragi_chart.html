@@ -21,7 +21,7 @@ $(document).ready(function() {
 
 
 function drawGraph(allText) {
-  var count = 0, incr = 0.3 * 100, lastPoint, baseValue;
+  var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend;
   var path = new Path();
   path.strokeColor = 'black';
 
@@ -33,6 +33,7 @@ function drawGraph(allText) {
 	   lastPoint = start;
 	   baseValue = value;
 	   path.moveTo(lastPoint);
+	   trend = null;
      } else {
      	if(value > (baseValue + incr)) {
      	  baseValue = value;
@@ -40,6 +41,7 @@ function drawGraph(allText) {
           path.lineTo(lastPoint);
           lastPoint = new Point(lastPoint.x, value);
           path.lineTo(lastPoint);
+          trend = "up";
         }
         else if(value < (baseValue - incr)) {
 	      baseValue = value;
@@ -47,17 +49,18 @@ function drawGraph(allText) {
 	      path.lineTo(lastPoint);
 	      lastPoint = new Point(lastPoint.x, value);
 	      path.lineTo(lastPoint);
+	      trend = "down";
         }
-        else if(value > baseValue && lastPoint.y < value) {
-//		  baseValue = value;
-//		  lastPoint = new Point(lastPoint.x, value);
-//		  path.lineTo(lastPoint);
+        else if(value > baseValue && (trend === "down" || trend === null )) {
+		  baseValue = value;
+		  lastPoint = new Point(lastPoint.x, value);
+		  path.lineTo(lastPoint);
 
         }
-        else if(value < baseValue && lastPoint.y > value) {
-//          baseValue = value;
-//          lastPoint = new Point(lastPoint.x, value);
-//          path.lineTo(lastPoint);
+        else if(value < baseValue && (trend === "up" || trend === null)) {
+          baseValue = value;
+          lastPoint = new Point(lastPoint.x, value);
+          path.lineTo(lastPoint);
         }
 
 
