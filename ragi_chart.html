@@ -51,13 +51,13 @@ function drawGraph(allText) {
 	      path.lineTo(lastPoint);
 	      trend = "down";
         }
-        else if(value > baseValue && (trend === "down" || trend === null )) {
+        else if(value > baseValue && (trend === "up" || trend === null )) {
 		  baseValue = value;
 		  lastPoint = new Point(lastPoint.x, value);
 		  path.lineTo(lastPoint);
 
         }
-        else if(value < baseValue && (trend === "up" || trend === null)) {
+        else if(value < baseValue && (trend === "down" || trend === null)) {
           baseValue = value;
           lastPoint = new Point(lastPoint.x, value);
           path.lineTo(lastPoint);
