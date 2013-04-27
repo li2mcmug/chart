@@ -36,28 +36,28 @@ function drawGraph(allText) {
      } else {
      	if(value > (baseValue + incr)) {
      	  baseValue = value;
-          lastPoint = new Point(lastPoint.x + 50, baseValue);
+          lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
           path.lineTo(lastPoint);
           lastPoint = new Point(lastPoint.x, value);
           path.lineTo(lastPoint);
         }
         else if(value < (baseValue - incr)) {
 	      baseValue = value;
-	      lastPoint = new Point(lastPoint.x + 50, baseValue);
+	      lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
 	      path.lineTo(lastPoint);
 	      lastPoint = new Point(lastPoint.x, value);
 	      path.lineTo(lastPoint);
         }
         else if(value > baseValue && lastPoint.y < value) {
-		  baseValue = value;
-		  lastPoint = new Point(lastPoint.x, value);
-		  path.lineTo(lastPoint);
+//		  baseValue = value;
+//		  lastPoint = new Point(lastPoint.x, value);
+//		  path.lineTo(lastPoint);
 
         }
         else if(value < baseValue && lastPoint.y > value) {
-          baseValue = value;
-          lastPoint = new Point(lastPoint.x, value);
-          path.lineTo(lastPoint);
+//          baseValue = value;
+//          lastPoint = new Point(lastPoint.x, value);
+//          path.lineTo(lastPoint);
         }
 
 
