@@ -21,22 +21,30 @@ $(document).ready(function() {
 
 
 function drawGraph(allText) {
-  var count = 0, incr = 2, lastPoint, baseValue;
+  var count = 0, incr = 30, lastPoint, baseValue;
   var path = new Path();
   path.strokeColor = 'black';
 
   var allTextLines = allText.split(/\r\n|\n/);
   _.each(allTextLines, function(value) {
+     value = value * 100;
      if(count === 0) {
 	   var start = new Point(100, value);
-	   lastPoint = baseValue = start;
+	   lastPoint = start;
+	   baseValue = value;
 	   path.moveTo(lastPoint);
      } else {
-//     	if(value > (baseValue + incr) || value < (baseValue - incr)) {
-//     	  baseValue = value;
-//          lastPoint = lastPoint + [10,0];
-//        }
-        lastPoint = new Point(lastPoint.x, value * 100);
+     	if(value > (baseValue + incr)) {
+     	  baseValue = value;
+          lastPoint = new Point(lastPoint.x + 10, value);
+        }
+        else if(value < (baseValue - incr)) {
+	      baseValue = value;
+	      lastPoint = new Point(lastPoint.x + 10, value);
+        }
+        else {
+          lastPoint = new Point(lastPoint.x, value);
+        }
 
         path.lineTo(lastPoint);
      }
