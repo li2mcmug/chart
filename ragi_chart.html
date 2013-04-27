@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/paper.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+
+
+$(document).ready(function() {
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "TEST.csv",
+        dataType: "text",
+        success: function(data) {drawGraph(data);}
+     });
+});
+
+
+function drawGraph(allText) {
+  var count = 0;
+  var path = new Path();
+  var lastPoint;
+  path.strokeColor = 'black';
+
+  var allTextLines = allText.split(/\r\n|\n/);
+  _.each(allTextLines, function(value) {
+     if(count === 0) {
+	   var start = new Point(100, 100);
+	   path.moveTo(start);
+	   lastPoint = start;
+     } else {
+        path.lineTo(lastPoint + [100, value]);
+     }
+    count++;
+  });
+};
+
+
+</script>
+</head>
+<body>
+    <canvas id="myCanvas" resize></canvas>
+</body>
+</html>
