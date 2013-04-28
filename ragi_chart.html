@@ -23,7 +23,7 @@ $(document).ready(function() {
 
 function drawGraph(allText) {
   var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend;
-  var maxHeight = 0;
+  var maxHeight = 800;
   var path = new Path();
   path.strokeColor = 'black';
 
@@ -35,17 +35,15 @@ function drawGraph(allText) {
 	   var start = new Point(100, value);
 	   lastPoint = start;
 	   baseValue = value;
-	   lastPoint.y = lastPoint.y;
+	   lastPoint.y = maxHeight - lastPoint.y;
 	   path.moveTo(lastPoint);
 	   trend = null;
      } else {
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
      	  baseValue = value;
           lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
-		  lastPoint.y = lastPoint.y;
           path.lineTo(lastPoint);
-          lastPoint = new Point(lastPoint.x, value);
- 	      lastPoint.y = lastPoint.y;
+          lastPoint = new Point(lastPoint.x, maxHeight - value);
           path.lineTo(lastPoint);
           trend = "up";
         }
@@ -53,23 +51,19 @@ function drawGraph(allText) {
 	      baseValue = value;
 	      lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
 	      path.lineTo(lastPoint);
-	      lastPoint.y = lastPoint.y;
-	      lastPoint = new Point(lastPoint.x, value);
-	      lastPoint.y = lastPoint.y;
+	      lastPoint = new Point(lastPoint.x, maxHeight - value);
 	      path.lineTo(lastPoint);
 	      trend = "down";
         }
         else if(value > baseValue && (trend === "up" || trend === null )) {
 		  baseValue = value;
-		  lastPoint = new Point(lastPoint.x, value);
-		  lastPoint.y = lastPoint.y;
+		  lastPoint = new Point(lastPoint.x, maxHeight - value);
 		  path.lineTo(lastPoint);
 
         }
         else if(value < baseValue && (trend === "down" || trend === null)) {
           baseValue = value;
-          lastPoint = new Point(lastPoint.x, value);
-          lastPoint.y = lastPoint.y;
+          lastPoint = new Point(lastPoint.x, maxHeight - value);
           path.lineTo(lastPoint);
         }
 
