@@ -8,6 +8,7 @@
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 
+var maxHeight = 800;
 
 $(document).ready(function() {
     $.ajax({
@@ -26,10 +27,15 @@ function drawHorizontalLine(path, lastPoint){
   return lastPoint;
 }
 
+function addPoint(path, lastPoint, value){
+  lastPoint = new Point(lastPoint.x, maxHeight - value);
+  path.lineTo(lastPoint);
+  return lastPoint;
+}
+
 
 function drawGraph(allText) {
   var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend, originalValue;
-  var maxHeight = 800;
   var path = new Path();
   path.strokeColor = 'black';
   path.strokeWidth = 5;
@@ -52,10 +58,8 @@ function drawGraph(allText) {
           if(value < baseValue) { trend = "down"; }
         }
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
-     	  baseValue = value;
           lastPoint = drawHorizontalLine(path, lastPoint);
-          lastPoint = new Point(lastPoint.x, maxHeight - value);
-          path.lineTo(lastPoint);
+          lastPoint = addPoint(path, lastPoint, value);
 
          // var text = new PointText(lastPoint);
 		//  text.justification = 'center';
@@ -68,19 +72,16 @@ function drawGraph(allText) {
         else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
 	      baseValue = value;
 	      lastPoint = drawHorizontalLine(path, lastPoint);
-	      lastPoint = new Point(lastPoint.x, maxHeight - value);
-	      path.lineTo(lastPoint);
+	      lastPoint = addPoint(path, lastPoint, value);
 	      trend = "down";
         }
         else if(value > baseValue && trend === "up") {
 		  baseValue = value;
-		  lastPoint = new Point(lastPoint.x, maxHeight - value);
-		  path.lineTo(lastPoint);
+		  lastPoint = addPoint(path, lastPoint, value);
         }
         else if(value < baseValue && trend === "down") {
           baseValue = value;
-          lastPoint = new Point(lastPoint.x, maxHeight - value);
-          path.lineTo(lastPoint);
+          lastPoint = addPoint(path, lastPoint, value);
         }
 
 
