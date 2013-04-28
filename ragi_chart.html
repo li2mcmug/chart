@@ -35,7 +35,7 @@ function drawGraph(allText) {
 	   path.moveTo(lastPoint);
 	   trend = null;
      } else {
-     	if(value > (baseValue + incr)) {
+     	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
      	  baseValue = value;
           lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
           path.lineTo(lastPoint);
@@ -43,7 +43,7 @@ function drawGraph(allText) {
           path.lineTo(lastPoint);
           trend = "up";
         }
-        else if(value < (baseValue - incr)) {
+        else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
 	      baseValue = value;
 	      lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
 	      path.lineTo(lastPoint);
