@@ -10,6 +10,8 @@
 
 var maxHeight = 800;
 
+var hitOptions = { fill: true, stroke: true, segments: true, tolerance: true, type: Point }
+
 $(document).ready(function() {
     $.ajax({
         type: "GET",
@@ -33,11 +35,30 @@ function addPoint(path, lastPoint, value){
   return lastPoint;
 }
 
+function addText(lastPoint, originalValue) {
+  var text = new PointText(lastPoint);
+  text.justification = 'center';
+  text.fillColor = 'black';
+  text.content = originalValue;
+  text.visible = false;
+}
+
+function onMouseMove(event) {
+  var hitResult = project.hitTest(event.point, hitOptions);
+
+  if(hitResult) {
+    var y = hitResult.segment.point.y;
+	alert(y);
+  }
+}
+
+
 
 function drawGraph(allText) {
   var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend, originalValue;
   var path = new Path();
   path.strokeColor = 'black';
+  path.fullySelected = true;
   path.strokeWidth = 5;
 
   var allLines = allText.split(/\r\n|\n/);
@@ -58,15 +79,9 @@ function drawGraph(allText) {
           if(value < baseValue) { trend = "down"; }
         }
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
+     	  baseValue = value;
           lastPoint = drawHorizontalLine(path, lastPoint);
           lastPoint = addPoint(path, lastPoint, value);
-
-         // var text = new PointText(lastPoint);
-		//  text.justification = 'center';
-		//  text.fillColor = 'black';
-       //   text.content = originalValue;
-       //   text.visible = false;
-
           trend = "up";
         }
         else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
@@ -75,16 +90,10 @@ function drawGraph(allText) {
 	      lastPoint = addPoint(path, lastPoint, value);
 	      trend = "down";
         }
-        else if(value > baseValue && trend === "up") {
+        else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		  baseValue = value;
 		  lastPoint = addPoint(path, lastPoint, value);
         }
-        else if(value < baseValue && trend === "down") {
-          baseValue = value;
-          lastPoint = addPoint(path, lastPoint, value);
-        }
-
-
      }
     count++;
   });
