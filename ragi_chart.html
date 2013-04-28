@@ -11,6 +11,7 @@
 <script type="text/paperscript" canvas="myCanvas">
 
 var maxHeight = 800;
+var incr = 0.3;
 
 var hitOptions = { fill: true, stroke: true, segments: true, tolerance: 100, type: Point };
 
@@ -66,11 +67,12 @@ function onMouseMove(event) {
 
 
 function drawGraph(allText) {
-  var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend, originalValue;
+  var count = 0, lastPoint, baseValue, trend, originalValue;
   var path = new Path();
   path.strokeColor = 'black';
   path.fullySelected = true;
   path.strokeWidth = 5;
+  incr = incr * 100;
 
   var allLines = allText.split(/\r\n|\n/);
   allLines = allLines.reverse();
