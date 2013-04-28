@@ -20,46 +20,56 @@ $(document).ready(function() {
 });
 
 
+
 function drawGraph(allText) {
   var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend;
+  var maxHeight = 0;
   var path = new Path();
   path.strokeColor = 'black';
 
-  var allTextLines = allText.split(/\r\n|\n/);
-  _.each(allTextLines, function(value) {
+  var allLines = allText.split(/\r\n|\n/);
+  allLines = allLines.reverse();
+  _.each(allLines, function(value) {
      value = value * 100;
      if(count === 0) {
 	   var start = new Point(100, value);
 	   lastPoint = start;
 	   baseValue = value;
+	   lastPoint.y = lastPoint.y;
 	   path.moveTo(lastPoint);
 	   trend = null;
      } else {
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
      	  baseValue = value;
-          lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
+          lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
+		  lastPoint.y = lastPoint.y;
           path.lineTo(lastPoint);
           lastPoint = new Point(lastPoint.x, value);
+ 	      lastPoint.y = lastPoint.y;
           path.lineTo(lastPoint);
           trend = "up";
         }
         else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
 	      baseValue = value;
-	      lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
+	      lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
 	      path.lineTo(lastPoint);
+	      lastPoint.y = lastPoint.y;
 	      lastPoint = new Point(lastPoint.x, value);
+	      lastPoint.y = lastPoint.y;
 	      path.lineTo(lastPoint);
 	      trend = "down";
         }
         else if(value > baseValue && (trend === "up" || trend === null )) {
 		  baseValue = value;
 		  lastPoint = new Point(lastPoint.x, value);
+		  lastPoint.y = lastPoint.y;
 		  path.lineTo(lastPoint);
 
         }
         else if(value < baseValue && (trend === "down" || trend === null)) {
           baseValue = value;
           lastPoint = new Point(lastPoint.x, value);
+          lastPoint.y = lastPoint.y;
           path.lineTo(lastPoint);
         }
 
