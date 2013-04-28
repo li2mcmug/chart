@@ -12,8 +12,10 @@
 
 var maxHeight = 800;
 var incr = 0.3;
+var path = new Path();
+var dateMap = {};
 
-var hitOptions = { fill: true, stroke: true, segments: true, tolerance: 100, type: Point };
+var hitOptions = { fill: true, stroke: false, segments: true, tolerance: 100, type: Point };
 
 var priceTip  = $("#price-tooltip");
 var priceOpentip = new Opentip(priceTip, { showOn: null, style: 'alert' });
@@ -30,6 +32,9 @@ $(document).ready(function() {
 
 });
 
+function pointKey(point){
+  return point.x + "," + point.y;
+}
 
 function drawHorizontalLine(path, lastPoint){
   lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
@@ -37,38 +42,30 @@ function drawHorizontalLine(path, lastPoint){
   return lastPoint;
 }
 
-function addPoint(path, lastPoint, value){
+function addPoint(path, lastPoint, date, value){
   lastPoint = new Point(lastPoint.x, maxHeight - value);
   path.lineTo(lastPoint);
-  addText(lastPoint, value);
+  dateMap[pointKey(lastPoint)] = date;
   return lastPoint;
 }
 
-function addText(item, value) {
-  var text = new PointText(item);
-  text.justification = 'center';
-  text.fillColor = 'black';
-  text.content = value;
-  text.visible = false;
-}
-
 function onMouseMove(event) {
-  var hitResult = project.hitTest(event.point, hitOptions);
+  var hitResult = path.hitTest(event.point, hitOptions);
 
   if(hitResult) {
-    var y = hitResult.segment.point.y;
+    var point = hitResult.segment.point;
+    var y = point.y;
+    //alert(y.data.value);
     value = (maxHeight - parseInt(y)) / 100;
-    priceOpentip.setContent(value);
+    priceOpentip.setContent(dateMap[pointKey(point)] + "," + value);
     priceOpentip.show();
-    //addText(hitResult, value);
   }
 }
 
 
 
 function drawGraph(allText) {
-  var count = 0, lastPoint, baseValue, trend, originalValue;
-  var path = new Path();
+  var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
   path.strokeColor = 'black';
   path.fullySelected = true;
   path.strokeWidth = 5;
@@ -76,7 +73,11 @@ function drawGraph(allText) {
 
   var allLines = allText.split(/\r\n|\n/);
   allLines = allLines.reverse();
-  _.each(allLines, function(value) {
+  _.each(allLines, function(line) {
+  value = line;
+     var values = line.split(',');
+     date = values[0];
+     value = values[1];
      originalValue = value;
      value = value * 100;
      if(count === 0) {
@@ -91,21 +92,23 @@ function drawGraph(allText) {
           if(value > baseValue) { trend = "up"; }
           if(value < baseValue) { trend = "down"; }
         }
-     	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
+     	if(value > (baseValue + incr) && (trend === "down" || _.isNull(trend)) ) {
+     	  prevLow = baseValue;
      	  baseValue = value;
           lastPoint = drawHorizontalLine(path, lastPoint);
-          lastPoint = addPoint(path, lastPoint, value);
+          lastPoint = addPoint(path, lastPoint, date, value);
           trend = "up";
         }
-        else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
+        else if(value < (baseValue - incr) && (trend === "up" || _.isNull(trend)) ) {
+          prevHigh = baseValue;
 	      baseValue = value;
 	      lastPoint = drawHorizontalLine(path, lastPoint);
-	      lastPoint = addPoint(path, lastPoint, value);
+	      lastPoint = addPoint(path, lastPoint, date, value);
 	      trend = "down";
         }
         else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		  baseValue = value;
-		  lastPoint = addPoint(path, lastPoint, value);
+		  lastPoint = addPoint(path, lastPoint, date, value);
         }
      }
     count++;
