@@ -20,16 +20,24 @@ $(document).ready(function() {
 });
 
 
+function drawHorizontalLine(path, lastPoint){
+  lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
+  path.lineTo(lastPoint);
+  return lastPoint;
+}
+
 
 function drawGraph(allText) {
-  var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend;
+  var count = 0, incr = 0.3 * 100, lastPoint, baseValue, trend, originalValue;
   var maxHeight = 800;
   var path = new Path();
   path.strokeColor = 'black';
+  path.strokeWidth = 5;
 
   var allLines = allText.split(/\r\n|\n/);
   allLines = allLines.reverse();
   _.each(allLines, function(value) {
+     originalValue = value;
      value = value * 100;
      if(count === 0) {
 	   var start = new Point(100, value);
@@ -45,16 +53,21 @@ function drawGraph(allText) {
         }
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
      	  baseValue = value;
-          lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
-          path.lineTo(lastPoint);
+          lastPoint = drawHorizontalLine(path, lastPoint);
           lastPoint = new Point(lastPoint.x, maxHeight - value);
           path.lineTo(lastPoint);
+
+         // var text = new PointText(lastPoint);
+		//  text.justification = 'center';
+		//  text.fillColor = 'black';
+       //   text.content = originalValue;
+       //   text.visible = false;
+
           trend = "up";
         }
         else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
 	      baseValue = value;
-	      lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
-	      path.lineTo(lastPoint);
+	      lastPoint = drawHorizontalLine(path, lastPoint);
 	      lastPoint = new Point(lastPoint.x, maxHeight - value);
 	      path.lineTo(lastPoint);
 	      trend = "down";
