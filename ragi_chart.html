@@ -39,9 +39,13 @@ function drawGraph(allText) {
 	   path.moveTo(lastPoint);
 	   trend = null;
      } else {
+        if(count === 1) {
+          if(value > baseValue) { trend = "up"; }
+          if(value < baseValue) { trend = "down"; }
+        }
      	if(value > (baseValue + incr) && (trend === "down" || trend === null)) {
      	  baseValue = value;
-          lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
+          lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
           path.lineTo(lastPoint);
           lastPoint = new Point(lastPoint.x, maxHeight - value);
           path.lineTo(lastPoint);
@@ -49,19 +53,18 @@ function drawGraph(allText) {
         }
         else if(value < (baseValue - incr) && (trend === "up" || trend === null)) {
 	      baseValue = value;
-	      lastPoint = new Point(lastPoint.x + 10, lastPoint.y);
+	      lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
 	      path.lineTo(lastPoint);
 	      lastPoint = new Point(lastPoint.x, maxHeight - value);
 	      path.lineTo(lastPoint);
 	      trend = "down";
         }
-        else if(value > baseValue && (trend === "up" || trend === null )) {
+        else if(value > baseValue && trend === "up") {
 		  baseValue = value;
 		  lastPoint = new Point(lastPoint.x, maxHeight - value);
 		  path.lineTo(lastPoint);
-
         }
-        else if(value < baseValue && (trend === "down" || trend === null)) {
+        else if(value < baseValue && trend === "down") {
           baseValue = value;
           lastPoint = new Point(lastPoint.x, maxHeight - value);
           path.lineTo(lastPoint);
