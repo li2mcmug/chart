@@ -5,12 +5,17 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
 <script type="text/javascript" src="js/paper.js"></script>
+<script type="text/javascript" src="js/opentip-jquery.js"></script>
+<link href="css/opentip.css" rel="stylesheet" type="text/css" />
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 
 var maxHeight = 800;
 
-var hitOptions = { fill: true, stroke: true, segments: true, tolerance: true, type: Point }
+var hitOptions = { fill: true, stroke: true, segments: true, tolerance: 100, type: Point };
+
+var priceTip  = $("#price-tooltip");
+var priceOpentip = new Opentip(priceTip, { showOn: null, style: 'alert' });
 
 $(document).ready(function() {
     $.ajax({
@@ -20,6 +25,8 @@ $(document).ready(function() {
         dataType: "text",
         success: function(data) {drawGraph(data);}
      });
+
+
 });
 
 
@@ -32,14 +39,15 @@ function drawHorizontalLine(path, lastPoint){
 function addPoint(path, lastPoint, value){
   lastPoint = new Point(lastPoint.x, maxHeight - value);
   path.lineTo(lastPoint);
+  addText(lastPoint, value);
   return lastPoint;
 }
 
-function addText(lastPoint, originalValue) {
-  var text = new PointText(lastPoint);
+function addText(item, value) {
+  var text = new PointText(item);
   text.justification = 'center';
   text.fillColor = 'black';
-  text.content = originalValue;
+  text.content = value;
   text.visible = false;
 }
 
@@ -48,7 +56,10 @@ function onMouseMove(event) {
 
   if(hitResult) {
     var y = hitResult.segment.point.y;
-	alert(y);
+    value = (maxHeight - parseInt(y)) / 100;
+    priceOpentip.setContent(value);
+    priceOpentip.show();
+    //addText(hitResult, value);
   }
 }
 
@@ -104,5 +115,7 @@ function drawGraph(allText) {
 </head>
 <body>
     <canvas id="myCanvas" resize></canvas>
+    <div id="price-tooltip"></div>
+    <div data-ot="Shown after 2 seconds" data-ot-delay="2"></div>
 </body>
 </html>
