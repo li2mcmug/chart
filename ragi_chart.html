@@ -12,8 +12,8 @@
 <script type="text/paperscript" canvas="myCanvas">
 
 var maxHeight;
-var incr = 3;
-var multiplier = 10;
+var incr = 0.4;
+var multiplier = 100;
 var path = new Path();
 var dateMap = {};
 
@@ -90,7 +90,7 @@ function drawGraph(allText) {
   incr = incr * multiplier;
 
   var allLines = allText.split(/\r\n|\n/);
-  maxHeight = Math.ceil(maxPrice(allLines)) * multiplier;
+  maxHeight = Math.ceil(maxPrice(allLines)) * multiplier + multiplier;
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
       value = line;
