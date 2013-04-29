@@ -10,8 +10,9 @@
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 
-var maxHeight = 800;
+var maxHeight;
 var incr = 0.3;
+var multiplier = 100;
 var path = new Path();
 var dateMap = {};
 
@@ -64,31 +65,36 @@ function onMouseMove(event) {
   if(hitResult) {
     var point = hitResult.segment.point;
     var y = point.y;
-    //alert(y.data.value);
-    value = (maxHeight - parseInt(y)) / 100;
+    value = (maxHeight - parseInt(y)) / multiplier;
     priceOpentip.setContent(dateMap[pointKey(point)] + ", " + value);
     priceOpentip.show();
   }
 }
 
+function maxPrice(lines) {
+  var lineWithMaxPrice = _.max(lines, function(line) {
+    return line.split(/,/)[4];
+  });
+  return lineWithMaxPrice.split(/,/)[4];
+}
 
 
 function drawGraph(allText) {
   var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
   setupPath();
 
-  incr = incr * 100;
+  incr = incr * multiplier;
 
   var allLines = allText.split(/\r\n|\n/);
+  maxHeight = Math.ceil(maxPrice(allLines)) * multiplier;
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
-
       value = line;
       var values = line.split(/,/);
       date = values[0].replace(/\"/g, "");
       value = values[4];
       originalValue = value;
-      value = value * 100;
+      value = value * multiplier;
 
       if(count === 0) {
 	    var start = new Point(100, value);
@@ -122,7 +128,6 @@ function drawGraph(allText) {
 		  lastPoint = addPoint(path, lastPoint, date, value);
         }
       }
-
 
     count++;
   });
