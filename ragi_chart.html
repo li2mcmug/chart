@@ -71,6 +71,8 @@ function onMouseMove(event) {
   }
 }
 
+
+
 function drawGraph(allText) {
   var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
   setupPath();
@@ -87,13 +89,13 @@ function drawGraph(allText) {
      originalValue = value;
      value = value * 100;
 
+
      if(count === 0) {
 	   var start = new Point(100, value);
 	   lastPoint = start;
 	   baseValue = value;
 	   lastPoint.y = maxHeight - lastPoint.y;
 	   path.moveTo(lastPoint);
-	   dateMap[pointKey(lastPoint)] = date;
 	   trend = null;
      } else {
         if(count === 1) {
