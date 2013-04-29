@@ -82,22 +82,23 @@ function drawGraph(allText) {
   var allLines = allText.split(/\r\n|\n/);
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
-  value = line;
-     var values = line.split(/,/);
-     date = values[0].replace(/\"/g, "");
-     value = values[1];
-     originalValue = value;
-     value = value * 100;
 
+      value = line;
+      var values = line.split(/,/);
+      date = values[0].replace(/\"/g, "");
+      value = values[4];
+      originalValue = value;
+      value = value * 100;
 
-     if(count === 0) {
-	   var start = new Point(100, value);
-	   lastPoint = start;
-	   baseValue = value;
-	   lastPoint.y = maxHeight - lastPoint.y;
-	   path.moveTo(lastPoint);
-	   trend = null;
-     } else {
+      if(count === 0) {
+	    var start = new Point(100, value);
+	    lastPoint = start;
+	    baseValue = value;
+	    lastPoint.y = maxHeight - lastPoint.y;
+	    path.moveTo(lastPoint);
+	    dateMap[pointKey(lastPoint)] = date;
+	    trend = null;
+      } else {
         if(count === 1) {
           if(value > baseValue) { trend = "up"; }
           if(value < baseValue) { trend = "down"; }
@@ -120,7 +121,9 @@ function drawGraph(allText) {
 		  baseValue = value;
 		  lastPoint = addPoint(path, lastPoint, date, value);
         }
-     }
+      }
+
+
     count++;
   });
 };
