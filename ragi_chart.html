@@ -16,6 +16,7 @@ var incr = 0.04;
 var multiplier;
 var path = new Path();
 var dateMap = {};
+var priceMap = {};
 
 var hitOptions = { fill: true, stroke: false, segments: true, tolerance: 5, type: Point };
 
@@ -49,17 +50,21 @@ function pointKey(point){
 
 function drawHorizontalLine(path, lastPoint){
   var date = dateMap[pointKey(lastPoint)];
+  var price = priceMap[pointKey(lastPoint)];
 
   lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
   path.lineTo(lastPoint);
   dateMap[pointKey(lastPoint)] = date;
+  priceMap[pointKey(lastPoint)] = price;
+
   return lastPoint;
 }
 
-function addPoint(path, lastPoint, date, value){
+function addPoint(path, lastPoint, date, value, originalValue){
   lastPoint = new Point(lastPoint.x, maxHeight - value);
   path.lineTo(lastPoint);
   dateMap[pointKey(lastPoint)] = date;
+  priceMap[pointKey(lastPoint)] = originalValue;
   return lastPoint;
 }
 
@@ -70,7 +75,7 @@ function onMouseMove(event) {
     var point = hitResult.segment.point;
     var y = point.y;
     value = (maxHeight - parseInt(y)) / multiplier;
-    priceOpentip.setContent(dateMap[pointKey(point)] + ", " + value);
+    priceOpentip.setContent(dateMap[pointKey(point)] + ", " + priceMap[pointKey(point)]);
     priceOpentip.show();
   }
 }
@@ -108,6 +113,7 @@ function drawGraph(allText) {
 	    lastPoint.y = maxHeight - lastPoint.y;
 	    path.moveTo(lastPoint);
 	    dateMap[pointKey(lastPoint)] = date;
+	    priceMap[pointKey(lastPoint)] = originalValue;
 	    trend = null;
       } else {
         if(count === 1) {
@@ -120,19 +126,19 @@ function drawGraph(allText) {
      	  prevLow = baseValue;
      	  baseValue = value;
           lastPoint = drawHorizontalLine(path, lastPoint);
-          lastPoint = addPoint(path, lastPoint, date, value);
+          lastPoint = addPoint(path, lastPoint, date, value, originalValue);
           trend = "up";
         }
         else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
           prevHigh = baseValue;
 	      baseValue = value;
 	      lastPoint = drawHorizontalLine(path, lastPoint);
-	      lastPoint = addPoint(path, lastPoint, date, value);
+	      lastPoint = addPoint(path, lastPoint, date, value, originalValue);
 	      trend = "down";
         }
         else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		  baseValue = value;
-		  lastPoint = addPoint(path, lastPoint, date, value);
+		  lastPoint = addPoint(path, lastPoint, date, value, originalValue);
         }
       }
 
