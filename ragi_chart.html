@@ -29,7 +29,7 @@ $(document).ready(function() {
     $.ajax({
         type: "GET",
         async: false,
-        url: "data/DG.csv",
+        url: "data/" + symbol + ".csv",
         dataType: "text",
         success: function(data) {drawGraph(data);}
      });
