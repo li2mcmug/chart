@@ -5,14 +5,15 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
 <script type="text/javascript" src="js/paper.js"></script>
+<script type="text/javascript" src="js/purl.js"></script>
 <script type="text/javascript" src="js/opentip-jquery.js"></script>
 <link href="css/opentip.css" rel="stylesheet" type="text/css" />
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 
 var maxHeight;
-var incr = 0.3;
-var multiplier = 100;
+var incr = 3;
+var multiplier = 10;
 var path = new Path();
 var dateMap = {};
 
@@ -22,10 +23,13 @@ var priceTip  = $("#price-tooltip");
 var priceOpentip = new Opentip(priceTip, { showOn: null, style: 'alert' });
 
 $(document).ready(function() {
+    var url = $.url();
+    var symbol = url.param('symbol');
+
     $.ajax({
         type: "GET",
         async: false,
-        url: "TEST.csv",
+        url: "data/DG.csv",
         dataType: "text",
         success: function(data) {drawGraph(data);}
      });
