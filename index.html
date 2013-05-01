@@ -8,17 +8,32 @@
 var symbols = ["AA"];
 
 $(document).ready(function() {
+
+  $.ajax({
+      type: "GET",
+      async: false,
+      url: "config/symbol_list.txt",
+      dataType: "text",
+      success: function(data) {drawGraph(data);}
+   });
+
   _.each(symbols, function(symbol) {
     $('.symbols').append("<a href='chart.html?symbol=" + symbol + "' target='_blank'>AA</a>");
   });
-  
+
 });
+
+
+function printLines(allText){
+  var allLines = allText.split(/\r\n|\n/);
+
+}
 
 </script>
 </head>
 <body>
 <div class="symbols"></div>
-  
+
 </div>
 </body>
 </html>
