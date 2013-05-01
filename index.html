@@ -5,7 +5,6 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
 <script type="text/javascript">
-var symbols = ["AA"];
 
 $(document).ready(function() {
 
@@ -14,18 +13,18 @@ $(document).ready(function() {
       async: false,
       url: "config/symbol_list.txt",
       dataType: "text",
-      success: function(data) {drawGraph(data);}
+      success: function(data) { printLinks(data); }
    });
-
-  _.each(symbols, function(symbol) {
-    $('.symbols').append("<a href='chart.html?symbol=" + symbol + "' target='_blank'>AA</a>");
-  });
 
 });
 
 
-function printLines(allText){
-  var allLines = allText.split(/\r\n|\n/);
+function printLinks(allText){
+  var symbols = allText.split(/\r\n|\n/);
+
+  _.each(symbols, function(symbol) {
+    $('.symbols').append("<a href='chart.html?symbol=" + symbol + "' target='_blank'>" + symbol + "</a><br/>");
+  });
 
 }
 
