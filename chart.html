@@ -10,7 +10,6 @@
 <link href="css/opentip.css" rel="stylesheet" type="text/css" />
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
-
 var maxHeight;
 var incr = 0.04;
 var multiplier;
@@ -92,11 +91,18 @@ function onMouseMove(event) {
 
 function maxPrice(lines) {
   var lineWithMaxPrice = _.max(lines, function(line) {
-    return line.length > 0 && line.split(/,/)[4];
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
   });
   return lineWithMaxPrice.split(/,/)[4];
 }
 
+function minPrice(lines) {
+  var lineWithMinPrice = _.min(lines, function(line) {
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
+  });
+
+  return lineWithMinPrice.split(/,/)[4];
+}
 
 function drawGraph(allText) {
   var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
@@ -104,7 +110,9 @@ function drawGraph(allText) {
 
   var allLines = allText.split(/\r\n|\n/);
   var maximumPrice = maxPrice(allLines);
-  multiplier = 100 / (maximumPrice / 10);
+  var minimumPrice = minPrice(allLines);
+
+  multiplier = 300 / (maximumPrice - minimumPrice);
 
   maxHeight = Math.ceil(maximumPrice) * multiplier + multiplier;
   allLines = allLines.reverse();
@@ -118,7 +126,7 @@ function drawGraph(allText) {
       value = value * multiplier;
 
       if(count === 0) {
-	    var start = new Point(100, value);
+	    var start = new Point(50, value);
 	    lastPoint = start;
 	    baseValue = value;
 	    lastPoint.y = maxHeight - lastPoint.y;
