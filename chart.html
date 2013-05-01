@@ -93,7 +93,7 @@ function onMouseMove(event) {
 
 function maxPrice(lines) {
   var lineWithMaxPrice = _.max(lines, function(line) {
-    return line.split(/,/)[4];
+    return line.length > 0 && line.split(/,/)[4];
   });
   return lineWithMaxPrice.split(/,/)[4];
 }
@@ -110,6 +110,7 @@ function drawGraph(allText) {
   maxHeight = Math.ceil(maximumPrice) * multiplier + multiplier;
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
+    if(line.length > 0) {
       value = line;
       var values = line.split(/,/);
       date = values[0].replace(/\"/g, "");
@@ -159,7 +160,8 @@ function drawGraph(allText) {
         }
       }
 
-    count++;
+      count++;
+    }
   });
 };
 
