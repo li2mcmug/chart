@@ -11,7 +11,7 @@
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 var maxHeight;
-var incr = 0.04;
+var incr;
 var multiplier;
 var path = new Path();
 var dateMap = {};
@@ -25,6 +25,7 @@ var priceOpentip = new Opentip(priceTip, { showOn: null, style: 'alert' });
 $(document).ready(function() {
     var url = $.url();
     var symbol = url.param('symbol');
+    incr = (url.param('incr') || 4) / 100;
 
     $.ajax({
         type: "GET",
