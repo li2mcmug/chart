@@ -115,6 +115,31 @@ function minPrice(lines) {
   return lineWithMinPrice.split(/,/)[4];
 }
 
+function getClose(close, adjClose) {
+  var difference = Math.abs(close - adjClose);
+  var differencePercentage = (difference / close) * 100;
+  if(differencePercentage < 1) {
+    return close;
+  }
+  return adjClose;
+}
+
+function formatDate(dateString) {
+  var date = dateString.replace(/\"/g, "");
+  date = date.replace(/^20.../g, "");
+  date = date.replace(/-/g, '/');
+  return date;
+}
+
+function drawStartingPoint(value, date) {
+  var lastPoint = new Point(50, value);
+  lastPoint.y = maxHeight - lastPoint.y;
+  path.moveTo(lastPoint);
+  dateMap[pointKey(lastPoint)] = date;
+  priceMap[pointKey(lastPoint)] = value;
+  return lastPoint;
+}
+
 function drawGraph(allText) {
   var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
   setupPath();
@@ -131,43 +156,37 @@ function drawGraph(allText) {
     if(line.length > 0) {
       value = line;
       var values = line.split(/,/);
-      date = values[0].replace(/\"/g, "");
-      date = date.replace(/^20.../g, "");
-      date = date.replace(/-/g, '/');
 
-      value = values[6];
+      date = formatDate(values[0]);
+
+      var close = values[4];
+      var adjClose = values[6];
+      value = getClose(close, adjClose);
       originalValue = value;
       value = value * multiplier;
 
       if(count === 0) {
-	    var start = new Point(50, value);
-	    lastPoint = start;
-	    baseValue = value;
-	    lastPoint.y = maxHeight - lastPoint.y;
-	    path.moveTo(lastPoint);
-	    dateMap[pointKey(lastPoint)] = date;
-	    priceMap[pointKey(lastPoint)] = originalValue;
-	    trend = null;
+         lastPoint = drawStartingPoint(value, date);
+	   	 baseValue = value;
       } else {
         if(count === 1) {
           if(value > baseValue) { trend = "up"; path.strokeColor = 'green'; }
           if(value < baseValue) { trend = "down"; path.strokeColor = 'red'; }
         }
 
-
         if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
-          prevLow = baseValue;
-          baseValue = value;
-          lastPoint = drawHorizontalLine(path, lastPoint);
-          lastPoint = addPoint(path, lastPoint, date, value, originalValue);
-          trend = "up";
+           prevLow = baseValue;
+           baseValue = value;
+           lastPoint = drawHorizontalLine(path, lastPoint);
+           lastPoint = addPoint(path, lastPoint, date, value, originalValue);
+           trend = "up";
         }
         else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
-          prevHigh = baseValue;
-	        baseValue = value;
-	        lastPoint = drawHorizontalLine(path, lastPoint);
-	        lastPoint = addPoint(path, lastPoint, date, value, originalValue);
-	        trend = "down";
+           prevHigh = baseValue;
+	       baseValue = value;
+	       lastPoint = drawHorizontalLine(path, lastPoint);
+	       lastPoint = addPoint(path, lastPoint, date, value, originalValue);
+	       trend = "down";
         }
         else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		      baseValue = value;
