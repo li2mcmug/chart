@@ -75,7 +75,7 @@ function addPointText(point, text) {
   pointText.justification = 'center';
   pointText.fillColor = 'black';
   pointText.content = text;
-  pointText.fontSize = '7';
+  pointText.fontSize = '9';
 }
 
 function addPoint(path, lastPoint, date, value, originalValue){
@@ -132,9 +132,10 @@ function drawGraph(allText) {
       value = line;
       var values = line.split(/,/);
       date = values[0].replace(/\"/g, "");
-      date = values[0].replace(/\-/g, "/");
-      date = values[0].replace(/^20/g, "");
-      value = values[4];
+      date = date.replace(/^20.../g, "");
+      date = date.replace(/-/g, '/');
+
+      value = values[6];
       originalValue = value;
       value = value * multiplier;
 
