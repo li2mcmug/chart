@@ -37,6 +37,7 @@ $(document).ready(function() {
         success: function(data) {
           drawGraph(data);
           breakPoint = calculateBreakPoint(highs);
+          $('.symbol').html(breakPoint);
         }
      });
 });
@@ -143,6 +144,7 @@ function drawStartingPoint(value, date) {
   priceMap[pointKey(lastPoint)] = value;
   return lastPoint;
 }
+
 function calculateBreakPoint(highs) {
   if(highs.length >= 0) {
     var first_high = highs[highs.length - 2];
@@ -225,5 +227,6 @@ function drawGraph(allText) {
     <canvas id="myCanvas" resize></canvas>
     <div id="price-tooltip"></div>
     <div data-ot="Shown after 2 seconds" data-ot-delay="2"></div>
+    <div class="symbol"></div>
 </body>
 </html>
