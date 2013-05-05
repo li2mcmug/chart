@@ -168,40 +168,34 @@ function drawGraph(allText) {
       if(count === 0) {
          lastPoint = drawStartingPoint(value, date);
 	   	 baseValue = value;
-      } else {
-        if(count === 1) {
+      } else if(count === 1) {
           if(value > baseValue) { trend = "up"; path.strokeColor = 'green'; }
           if(value < baseValue) { trend = "down"; path.strokeColor = 'red'; }
-        }
-
-        if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
+      } else if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
            prevLow = baseValue;
            baseValue = value;
            lastPoint = drawHorizontalLine(path, lastPoint);
            lastPoint = addPoint(path, lastPoint, date, value, originalValue);
            trend = "up";
-        }
-        else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
+      } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
            prevHigh = baseValue;
 	       baseValue = value;
 	       lastPoint = drawHorizontalLine(path, lastPoint);
 	       lastPoint = addPoint(path, lastPoint, date, value, originalValue);
 	       trend = "down";
-        }
-        else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
-		      baseValue = value;
-          if(value > prevHigh) {
-            lastPoint = changeStyle(lastPoint, 'green', prevHigh);
-          }
+     } else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
+		   baseValue = value;
+           if(value > prevHigh) {
+             lastPoint = changeStyle(lastPoint, 'green', prevHigh);
+           }
           else if(value < prevLow) {
-            lastPoint = changeStyle(lastPoint, 'red', prevLow);
+             lastPoint = changeStyle(lastPoint, 'red', prevLow);
           }
-		     lastPoint = addPoint(path, lastPoint, date, value, originalValue);
-        }
-      }
-
-      count++;
+		  lastPoint = addPoint(path, lastPoint, date, value, originalValue);
+     }
+     count++;
     }
+
   });
 };
 
