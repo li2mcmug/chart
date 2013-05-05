@@ -8,6 +8,7 @@
 <script type="text/javascript" src="js/purl.js"></script>
 <script type="text/javascript" src="js/opentip-jquery.js"></script>
 <link href="css/opentip.css" rel="stylesheet" type="text/css" />
+<link href="css/chart.css" rel="stylesheet" type="text/css" />
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="myCanvas">
 var maxHeight;
@@ -37,7 +38,7 @@ $(document).ready(function() {
         success: function(data) {
           drawGraph(data);
           breakPoint = calculateBreakPoint(highs);
-          $('.symbol').html(breakPoint);
+          $('.breakPoint').html("Break Point: " + breakPoint);
         }
      });
 });
@@ -151,8 +152,7 @@ function calculateBreakPoint(highs) {
     var second_high = highs[highs.length - 1];
     if(first_high > second_high) {
       var difference = first_high - second_high;
-      alert(second_high - difference);
-      return (second_high - difference);
+      return parseFloat(second_high - difference).toFixed(2);
     } else {
       return 0;
     }
@@ -227,6 +227,6 @@ function drawGraph(allText) {
     <canvas id="myCanvas" resize></canvas>
     <div id="price-tooltip"></div>
     <div data-ot="Shown after 2 seconds" data-ot-delay="2"></div>
-    <div class="symbol"></div>
+    <div class="breakPoint"></div>
 </body>
 </html>
