@@ -139,12 +139,12 @@ function formatDate(dateString) {
   return date;
 }
 
-function drawStartingPoint(value, date) {
+function drawStartingPoint(value, date ,originalValue) {
   var lastPoint = new Point(50, value);
   lastPoint.y = maxHeight - lastPoint.y;
   path.moveTo(lastPoint);
   dateMap[pointKey(lastPoint)] = date;
-  priceMap[pointKey(lastPoint)] = value;
+  priceMap[pointKey(lastPoint)] = originalValue;
   return lastPoint;
 }
 
@@ -188,11 +188,11 @@ function drawGraph(allText) {
       value = value * multiplier;
 
       if(count === 0) {
-         lastPoint = drawStartingPoint(value, date);
+         lastPoint = drawStartingPoint(value, date, originalValue);
 	   	 baseValue = value;
       } else if(count === 1) {
           if(value > baseValue) { trend = "up"; path.strokeColor = 'green'; }
-          if(value < baseValue) { trend = "down"; path.strokeColor = 'red'; }
+          if(value <= baseValue) { trend = "down"; path.strokeColor = 'red'; }
       } else if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
            prevLow = baseValue;
            baseValue = value;
