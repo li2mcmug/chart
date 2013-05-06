@@ -38,7 +38,9 @@ $(document).ready(function() {
         success: function(data) {
           drawGraph(data);
           breakPoint = calculateBreakPoint(highs);
-          $('.breakPoint').html("Break Point: " + breakPoint);
+          if(breakPoint > 0) {
+            $('.breakPoint').html("Break Point: " + breakPoint);
+          }
         }
      });
 });
@@ -224,9 +226,9 @@ function drawGraph(allText) {
 </script>
 </head>
 <body>
+    <div class="breakPoint"></div>
     <canvas id="myCanvas" resize></canvas>
     <div id="price-tooltip"></div>
     <div data-ot="Shown after 2 seconds" data-ot-delay="2"></div>
-    <div class="breakPoint"></div>
 </body>
 </html>
