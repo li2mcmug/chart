@@ -52,10 +52,11 @@ function setupPath(color){
 }
 
 function changeStyle(lastPoint, color, prevTurningValue) {
-  path = new Path();
   path.moveTo(lastPoint);
   lastPoint = new Point(lastPoint.x, maxHeight - prevTurningValue);
   path.lineTo(lastPoint);
+  path = new Path();
+  path.moveTo(lastPoint);
   setupPath(color);
   return lastPoint;
 }
