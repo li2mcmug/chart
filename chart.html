@@ -64,14 +64,17 @@ function pointKey(point){
   return point.x + "," + point.y;
 }
 
+function mapPointToPriceAndDate(point, price, date) {
+  dateMap[pointKey(point)] = date;
+  priceMap[pointKey(point)] = price;
+}
+
 function drawHorizontalLine(path, lastPoint){
   var date = dateMap[pointKey(lastPoint)];
   var price = priceMap[pointKey(lastPoint)];
 
   lastPoint = new Point(lastPoint.x + 20, lastPoint.y);
   path.lineTo(lastPoint);
-  dateMap[pointKey(lastPoint)] = date;
-  priceMap[pointKey(lastPoint)] = price;
 
   addPointText(lastPoint, date);
 
@@ -89,8 +92,7 @@ function addPointText(point, text) {
 function addPoint(path, lastPoint, date, value, originalValue){
   lastPoint = new Point(lastPoint.x, maxHeight - value);
   path.lineTo(lastPoint);
-  dateMap[pointKey(lastPoint)] = date;
-  priceMap[pointKey(lastPoint)] = originalValue;
+  mapPointToPriceAndDate(lastPoint, date, originalValue);
   return lastPoint;
 }
 
@@ -143,8 +145,7 @@ function drawStartingPoint(value, date ,originalValue) {
   var lastPoint = new Point(50, value);
   lastPoint.y = maxHeight - lastPoint.y;
   path.moveTo(lastPoint);
-  dateMap[pointKey(lastPoint)] = date;
-  priceMap[pointKey(lastPoint)] = originalValue;
+  mapPointToPriceAndDate(lastPoint, date, originalValue);
   return lastPoint;
 }
 
@@ -197,6 +198,7 @@ function drawGraph(allText) {
            prevLow = baseValue;
            baseValue = value;
            lastPoint = drawHorizontalLine(path, lastPoint);
+           mapPointToPriceAndDate(lastPoint, priceMap[pointKey(lastPoint)], dateMap[pointKey(lastPoint)]);
            lastPoint = addPoint(path, lastPoint, date, value, originalValue);
            trend = "up";
       } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
@@ -204,6 +206,7 @@ function drawGraph(allText) {
 	       highs[highs.length] = (prevHigh / multiplier);
 	       baseValue = value;
 	       lastPoint = drawHorizontalLine(path, lastPoint);
+	       mapPointToPriceAndDate(lastPoint, priceMap[pointKey(lastPoint)], dateMap[pointKey(lastPoint)]);
 	       lastPoint = addPoint(path, lastPoint, date, value, originalValue);
 	       trend = "down";
      } else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
