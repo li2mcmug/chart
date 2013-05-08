@@ -35,11 +35,7 @@ $(document).ready(function() {
               url: "data/" + symbol + ".csv",
               dataType: "text",
               success: function(price_data) {
-                var price_lines = price_data.split(/\r\n|\n/);
-                _.each(price_lines, function(price) {
-                    alert(price);
-
-                });
+                scan(price_data);
               }
             });
 
@@ -101,6 +97,7 @@ function scan(allText) {
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
     if(line.length > 0) {
+alert(line);
       value = line;
       var values = line.split(/,/);
 
