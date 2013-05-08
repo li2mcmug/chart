@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript">
+
+var incr;
+var dateMap = {};
+var priceMap = {};
+var highs = new Array();
+var breakPoint;
+
+
+$(document).ready(function() {
+    incr = 4 / 100;
+
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "data/" + "AA" + ".csv",
+        dataType: "text",
+        success: function(data) {
+          scan(data);
+          breakPoint = calculateBreakPoint(highs);
+          if(breakPoint > 0) {
+            $('.breakPoint').html("Break Point: " + breakPoint);
+          }
+        }
+     });
+});
+
+
+function pointKey(point){
+  return point.x + "," + point.y;
+}
+
+function maxPrice(lines) {
+  var lineWithMaxPrice = _.max(lines, function(line) {
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
+  });
+  return lineWithMaxPrice.split(/,/)[4];
+}
+
+function minPrice(lines) {
+  var lineWithMinPrice = _.min(lines, function(line) {
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
+  });
+
+  return lineWithMinPrice.split(/,/)[4];
+}
+
+function getClose(close, adjClose) {
+  var difference = Math.abs(close - adjClose);
+  var differencePercentage = (difference / close) * 100;
+  if(differencePercentage < 1) {
+    return close;
+  }
+  return adjClose;
+}
+
+function calculateBreakPoint(highs) {
+  if(highs.length >= 0) {
+    var first_high = highs[highs.length - 2];
+    var second_high = highs[highs.length - 1];
+    if(first_high > second_high) {
+      var difference = first_high - second_high;
+      return parseFloat(second_high - difference).toFixed(2);
+    } else {
+      return 0;
+    }
+  }
+  return 0;
+}
+
+function scan(allText) {
+  var count = 0, baseValue, trend, value, date;
+
+  var allLines = allText.split(/\r\n|\n/);
+  var maximumPrice = maxPrice(allLines);
+  var minimumPrice = minPrice(allLines);
+
+  allLines = allLines.reverse();
+  _.each(allLines, function(line) {
+    if(line.length > 0) {
+      value = line;
+      var values = line.split(/,/);
+
+      var close = values[4];
+      var adjClose = values[6];
+      value = getClose(close, adjClose);
+
+      if(count === 0) {
+	   	 baseValue = value;
+      } else if(count === 1) {
+         if(value > baseValue) { trend = "up"; }
+         if(value <= baseValue) { trend = "down"; }
+      } else if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
+         baseValue = value;
+         trend = "up";
+      } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
+	     highs[highs.length] = baseValue;
+	     baseValue = value;
+	     trend = "down";
+     } else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
+		 baseValue = value;
+     }
+     count++;
+    }
+
+  });
+};
+
+
+</script>
+</head>
+<body>
+    <div class="breakPoint"></div>
+
+</body>
+</html>
