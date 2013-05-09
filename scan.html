@@ -38,6 +38,15 @@ $(document).ready(function() {
               dataType: "text",
               success: function(price_data) {
                 scan(price_data);
+
+                if(trends[trends.length - 1] != trends[trends.length - 2] ||
+				   trends[trends.length - 1] != trends[trends.length - 3] ||
+				   trends[trends.length - 1] != trends[trends.length - 4] ||
+				   trends[trends.length - 1] != trends[trends.length - 5]) {
+				   alert(symbol);
+                }
+
+
               }
             });
 
@@ -99,7 +108,7 @@ function scan(allText) {
   allLines = allLines.reverse();
   _.each(allLines, function(line) {
     if(line.length > 0) {
-alert(line);
+
       value = line;
       var values = line.split(/,/);
 
@@ -123,11 +132,12 @@ alert(line);
 		 baseValue = value;
      }
 
-     trends[trends.length - 1] = trend;
-     count++;
+      trends[trends.length] = trend;
+      count++;
     }
-
   });
+
+
 };
 
 
