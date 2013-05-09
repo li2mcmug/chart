@@ -4,6 +4,7 @@
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
+<link href="css/chart.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
 
 var incr;
@@ -39,11 +40,12 @@ $(document).ready(function() {
               success: function(price_data) {
                 scan(price_data);
 
-                if(trends[trends.length - 1] != trends[trends.length - 2] ||
+                if(trends[trends.length - 1] == "up" &&
+                   (trends[trends.length - 1] != trends[trends.length - 2] ||
 				   trends[trends.length - 1] != trends[trends.length - 3] ||
 				   trends[trends.length - 1] != trends[trends.length - 4] ||
-				   trends[trends.length - 1] != trends[trends.length - 5]) {
-				   alert(symbol);
+				   trends[trends.length - 1] != trends[trends.length - 5])) {
+				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
                 }
 
 
@@ -75,6 +77,12 @@ function minPrice(lines) {
   return lineWithMinPrice.split(/,/)[4];
 }
 
+function lastVolume(lines) {
+  //var lastData = lines[lines.length - 1].split(/,/);
+  //alert(lastData);
+  //return lastData[5];
+}
+
 function getClose(close, adjClose) {
   var difference = Math.abs(close - adjClose);
   var differencePercentage = (difference / close) * 100;
@@ -102,10 +110,13 @@ function scan(allText) {
   var count = 0, baseValue, trend, value, date;
 
   var allLines = allText.split(/\r\n|\n/);
+  allLines = allLines.reverse();
+
   var maximumPrice = maxPrice(allLines);
   var minimumPrice = minPrice(allLines);
+  //var lastVolume = lastVolume(allLines);
 
-  allLines = allLines.reverse();
+
   _.each(allLines, function(line) {
     if(line.length > 0) {
 
@@ -144,6 +155,7 @@ function scan(allText) {
 </script>
 </head>
 <body>
+    <div class="symbols"></div>
     <div class="breakPoint"></div>
 
 </body>
