@@ -203,7 +203,7 @@ function drawGraph(allText) {
            trend = "up";
       } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
            prevHigh = baseValue;
-	       highs[highs.length] = (prevHigh / multiplier);
+	       highs[highs.length - 1] = (prevHigh / multiplier);
 	       baseValue = value;
 	       lastPoint = drawHorizontalLine(path, lastPoint);
 	       mapPointToPriceAndDate(lastPoint, priceMap[pointKey(lastPoint)], dateMap[pointKey(lastPoint)]);

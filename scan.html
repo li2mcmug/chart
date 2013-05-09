@@ -9,6 +9,7 @@
 var incr;
 var dateMap = {};
 var priceMap = {};
+var trends  = new Array();
 var highs = new Array();
 var breakPoint;
 
@@ -27,6 +28,7 @@ $(document).ready(function() {
 
 	        dateMap = {};
 	        priceMap = {};
+	        trends = new Array();
 	        highs = new Array();
 
             $.ajax({
@@ -114,12 +116,14 @@ alert(line);
          baseValue = value;
          trend = "up";
       } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
-	     highs[highs.length] = baseValue;
+	     highs[highs.length - 1] = baseValue;
 	     baseValue = value;
 	     trend = "down";
      } else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		 baseValue = value;
      }
+
+     trends[trends.length - 1] = trend;
      count++;
     }
 
