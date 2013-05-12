@@ -39,12 +39,11 @@ $(document).ready(function() {
               dataType: "text",
               success: function(price_data) {
                 scan(price_data);
+                var volume = lastVolume(price_data);
 
-                if(trends[trends.length - 1] == "up" &&
+                if(volume > 1500000 && trends[trends.length - 1] == "up" &&
                    (trends[trends.length - 1] != trends[trends.length - 2] ||
-				   trends[trends.length - 1] != trends[trends.length - 3] ||
-				   trends[trends.length - 1] != trends[trends.length - 4] ||
-				   trends[trends.length - 1] != trends[trends.length - 5])) {
+				   trends[trends.length - 1] != trends[trends.length - 3])) {
 				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
                 }
 
@@ -77,10 +76,10 @@ function minPrice(lines) {
   return lineWithMinPrice.split(/,/)[4];
 }
 
-function lastVolume(lines) {
-  //var lastData = lines[lines.length - 1].split(/,/);
-  //alert(lastData);
-  //return lastData[5];
+function lastVolume(price_data) {
+  var lines = price_data.split(/\r\n|\n/);
+  var lastData = lines[0].split(/,/);
+  return lastData[5];
 }
 
 function getClose(close, adjClose) {
@@ -114,7 +113,6 @@ function scan(allText) {
 
   var maximumPrice = maxPrice(allLines);
   var minimumPrice = minPrice(allLines);
-  //var lastVolume = lastVolume(allLines);
 
 
   _.each(allLines, function(line) {
