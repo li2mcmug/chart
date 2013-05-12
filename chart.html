@@ -13,6 +13,7 @@
 <script type="text/paperscript" canvas="myCanvas">
 var maxHeight;
 var incr;
+var until;
 var multiplier;
 var path = new Path();
 var dateMap = {};
@@ -29,6 +30,7 @@ $(document).ready(function() {
     var url = $.url();
     var symbol = url.param('symbol');
     incr = (url.param('incr') || 4) / 100;
+    until = url.param('until');
 
     $.ajax({
         type: "GET",
@@ -175,6 +177,7 @@ function drawGraph(allText) {
 
   maxHeight = Math.ceil(maximumPrice) * multiplier + multiplier;
   allLines = allLines.reverse();
+
   _.each(allLines, function(line) {
     if(line.length > 0) {
       value = line;
@@ -219,6 +222,8 @@ function drawGraph(allText) {
           }
 		  lastPoint = addPoint(path, lastPoint, date, value, originalValue);
      }
+
+     if(values[0] == until) { return; }
      count++;
     }
 
