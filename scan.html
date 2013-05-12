@@ -4,10 +4,12 @@
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/purl.js"></script>
 <link href="css/chart.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
 
-var incr;
+var incr = 4 / 100;;
+var daysAgo;
 var dateMap = {};
 var priceMap = {};
 var trends  = new Array();
@@ -16,7 +18,7 @@ var breakPoint;
 
 
 $(document).ready(function() {
-    incr = 4 / 100;
+    daysAgo = $.url().param('daysago') || 0;
 
     $.ajax({
         type: "GET",
@@ -41,40 +43,20 @@ $(document).ready(function() {
                 scan(price_data);
                 var volume = lastVolume(price_data);
 
-                if(volume > 1500000 && trends[trends.length - 1] == "up" &&
-                   (trends[trends.length - 1] != trends[trends.length - 2] ||
-				   trends[trends.length - 1] != trends[trends.length - 3])) {
+                if(volume > 1500000 && trends[trends.length - daysAgo - 1] == "up" &&
+                   (trends[trends.length - 1] != trends[trends.length - daysAgo - 2] ||
+				   trends[trends.length - 1] != trends[trends.length - daysAgo - 3])) {
 				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
                 }
-
-
               }
-            });
+            }); // end of ajax
 
-          });
-          //scan(data);
-          //breakPoint = calculateBreakPoint(highs);
-          //if(breakPoint > 0) {
-          //  $('.breakPoint').html("Break Point: " + breakPoint);
-          //}
+          }); // end of each
+
         }
-     });
-});
+     }); // end of ajax
 
-function maxPrice(lines) {
-  var lineWithMaxPrice = _.max(lines, function(line) {
-    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
-  });
-  return lineWithMaxPrice.split(/,/)[4];
-}
-
-function minPrice(lines) {
-  var lineWithMinPrice = _.min(lines, function(line) {
-    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
-  });
-
-  return lineWithMinPrice.split(/,/)[4];
-}
+}); // end of document
 
 function lastVolume(price_data) {
   var lines = price_data.split(/\r\n|\n/);
@@ -91,28 +73,12 @@ function getClose(close, adjClose) {
   return adjClose;
 }
 
-function calculateBreakPoint(highs) {
-  if(highs.length >= 0) {
-    var first_high = highs[highs.length - 2];
-    var second_high = highs[highs.length - 1];
-    if(first_high > second_high) {
-      var difference = first_high - second_high;
-      return parseFloat(second_high - difference).toFixed(2);
-    } else {
-      return 0;
-    }
-  }
-  return 0;
-}
 
 function scan(allText) {
   var count = 0, baseValue, trend, value, date;
 
   var allLines = allText.split(/\r\n|\n/);
   allLines = allLines.reverse();
-
-  var maximumPrice = maxPrice(allLines);
-  var minimumPrice = minPrice(allLines);
 
 
   _.each(allLines, function(line) {

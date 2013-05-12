@@ -92,7 +92,7 @@ function addPointText(point, text) {
 function addPoint(path, lastPoint, date, value, originalValue){
   lastPoint = new Point(lastPoint.x, maxHeight - value);
   path.lineTo(lastPoint);
-  mapPointToPriceAndDate(lastPoint, date, originalValue);
+  mapPointToPriceAndDate(lastPoint, originalValue, date);
   return lastPoint;
 }
 
@@ -145,7 +145,7 @@ function drawStartingPoint(value, date ,originalValue) {
   var lastPoint = new Point(50, value);
   lastPoint.y = maxHeight - lastPoint.y;
   path.moveTo(lastPoint);
-  mapPointToPriceAndDate(lastPoint, date, originalValue);
+  mapPointToPriceAndDate(lastPoint, originalValue, date);
   return lastPoint;
 }
 
