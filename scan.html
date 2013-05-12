@@ -47,7 +47,7 @@ $(document).ready(function() {
                 if(volume > 1500000 && trends[trends.length - daysAgo - 1] == "up" &&
                    (trends[trends.length - 1] != trends[trends.length - daysAgo - 2] ||
 				   trends[trends.length - 1] != trends[trends.length - daysAgo - 3])) {
-				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
+				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "&until=" + dateMap[dateMap.length - daysAgo] + "'target='_blank'>" + symbol + "</a><br />");
                 }
 
                 if(count == 0) {
