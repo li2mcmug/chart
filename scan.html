@@ -10,7 +10,7 @@
 
 var incr = 4 / 100;;
 var daysAgo;
-var dateMap = {};
+var dateMap = new Array();
 var priceMap = {};
 var trends  = new Array();
 var highs = new Array();
@@ -19,6 +19,7 @@ var breakPoint;
 
 $(document).ready(function() {
     daysAgo = $.url().param('daysago') || 0;
+    var count = 0;
 
     $.ajax({
         type: "GET",
@@ -29,7 +30,7 @@ $(document).ready(function() {
           var symbol_lines = symbol_data.split(/\r\n|\n/);
           _.each(symbol_lines, function(symbol) {
 
-	        dateMap = {};
+	        dateMap = new Array();
 	        priceMap = {};
 	        trends = new Array();
 	        highs = new Array();
@@ -48,9 +49,14 @@ $(document).ready(function() {
 				   trends[trends.length - 1] != trends[trends.length - daysAgo - 3])) {
 				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
                 }
+
+                if(count == 0) {
+                  $('.date').html(dateMap[dateMap.length - daysAgo] + "<br />");
+                }
               }
             }); // end of ajax
 
+            count++;
           }); // end of each
 
         }
@@ -91,6 +97,8 @@ function scan(allText) {
       var adjClose = values[6];
       value = getClose(close, adjClose);
 
+      dateMap[dateMap.length] = values[0];
+
       if(count === 0) {
 	   	 baseValue = value;
       } else if(count === 1) {
@@ -119,8 +127,8 @@ function scan(allText) {
 </script>
 </head>
 <body>
+    <div class="date"></div>
     <div class="symbols"></div>
-    <div class="breakPoint"></div>
 
 </body>
 </html>
