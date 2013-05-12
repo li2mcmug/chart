@@ -23,10 +23,7 @@ $(document).ready(function() {
 function printLinks(allText){
   var symbols = allText.split(/\r\n|\n/);
   _.each(symbols, function(symbol) {
-    $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a>&nbsp;");
-    $('.symbols').append("<a class='incr' href='chart.html?incr=3&symbol=" + symbol + "'target='_blank'>3</a>&nbsp;");
-    $('.symbols').append("<a class='incr' href='chart.html?incr=4&symbol=" + symbol + "'target='_blank'>4</a>&nbsp;")
-    $('.symbols').append("<a class='incr' href='chart.html?incr=5&symbol=" + symbol + "'target='_blank'>5</a><br />");
+    $('.symbols').append("<a href='chart.html?symbol=" + symbol + "'target='_blank'>" + symbol + "</a><br />");
 
   });
 

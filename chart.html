@@ -166,7 +166,7 @@ function calculateBreakPoint(highs) {
 }
 
 function drawGraph(allText) {
-  var count = 0, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
+  var count = 0, end = false, lastPoint, baseValue, trend, originalValue, prevLow, prevHigh, value, date;
   setupPath();
 
   var allLines = allText.split(/\r\n|\n/);
@@ -179,7 +179,7 @@ function drawGraph(allText) {
   allLines = allLines.reverse();
 
   _.each(allLines, function(line) {
-    if(line.length > 0) {
+    if(line.length > 0 && end === false) {
       value = line;
       var values = line.split(/,/);
 
@@ -223,9 +223,11 @@ function drawGraph(allText) {
 		  lastPoint = addPoint(path, lastPoint, date, value, originalValue);
      }
 
-     if(values[0] == until) { return; }
+     if(values[0] == until) {
+       end = true;
+     }
      count++;
-    }
+   }
 
   });
 };
