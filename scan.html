@@ -8,13 +8,15 @@
 <link href="css/chart.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
 
-var incr = 4 / 100;;
+var incr = 4 / 100;
 var daysAgo;
 var dateMap = new Array();
 var priceMap = {};
 var trends  = new Array();
 var highs = new Array();
+var lows = new Array();
 var breakPoint;
+var lastPrice;
 
 
 $(document).ready(function() {
@@ -34,6 +36,7 @@ $(document).ready(function() {
 	        priceMap = {};
 	        trends = new Array();
 	        highs = new Array();
+	        lows = new Array();
 
             $.ajax({
               type: "GET",
@@ -44,9 +47,22 @@ $(document).ready(function() {
                 scan(price_data);
                 var volume = lastVolume(price_data);
 
+                /*
                 if(volume > 1500000 && trends[trends.length - daysAgo - 1] == "up" &&
                    (trends[trends.length - 1] != trends[trends.length - daysAgo - 2] ||
-				   trends[trends.length - 1] != trends[trends.length - daysAgo - 3])) {
+				   trends[trends.length - 1] != trends[trends.length - daysAgo - 3]))
+				*/
+
+				/*
+				if(trends[trends.length - 1] == "up" &&
+				   lastPrice > highs[highs.length - 1] &&
+				   (((lastPrice - highs[highs.length - 1]) / highs[highs.length - 1]) < 0.03)
+				  )
+				*/
+				if(lows.length >= 2 && highs.length >= 2 &&
+				   lows[lows.length - 1] > lows[lows.length - 2] &&
+				   highs[highs.length - 1] > highs[highs.length -2])
+				{
 				   $('.symbols').append("<a href='chart.html?symbol=" + symbol + "&until=" + dateMap[dateMap.length - daysAgo] + "'target='_blank'>" + symbol + "</a><br />");
                 }
 
@@ -96,6 +112,7 @@ function scan(allText) {
       var close = values[4];
       var adjClose = values[6];
       value = getClose(close, adjClose);
+      lastPrice = value; // for scanning
 
       dateMap[dateMap.length] = values[0];
 
@@ -105,16 +122,16 @@ function scan(allText) {
          if(value > baseValue) { trend = "up"; }
          if(value <= baseValue) { trend = "down"; }
       } else if(value > (baseValue * (1 + incr)) && (trend === "down" || _.isNull(trend)) ) {
+         lows[lows.length] = baseValue;
          baseValue = value;
          trend = "up";
       } else if(value < (baseValue * (1 - incr)) && (trend === "up" || _.isNull(trend)) ) {
-	     highs[highs.length - 1] = baseValue;
+	     highs[highs.length] = baseValue;
 	     baseValue = value;
 	     trend = "down";
      } else if((value > baseValue && trend === "up") || (value < baseValue && trend === "down")) {
 		 baseValue = value;
      }
-
       trends[trends.length] = trend;
       count++;
     }
