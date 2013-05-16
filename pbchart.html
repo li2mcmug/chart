@@ -29,6 +29,21 @@ $(document).ready(function() {
      });
 });
 
+function maxPrice(lines) {
+  var lineWithMaxPrice = _.max(lines, function(line) {
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
+  });
+  return lineWithMaxPrice.split(/,/)[4];
+}
+
+function minPrice(lines) {
+  var lineWithMinPrice = _.min(lines, function(line) {
+    if(line.length > 0) { return parseFloat(line.split(/,/)[4]);}
+  });
+
+  return lineWithMinPrice.split(/,/)[4];
+}
+
 function getClose(close, adjClose) {
   var difference = Math.abs(close - adjClose);
   var differencePercentage = (difference / close) * 100;
@@ -45,16 +60,36 @@ function formatDate(dateString) {
   return date;
 }
 
+function drawLine(left, top, x, y) {
+  var rectangle = new Rectangle(left, top, x, y);
+  var path = new Path.Rectangle(rectangle);
+  path.fillColor = '#e9e9ff';
+  path.selected = true;
+}
+
 function drawGraph(allText) {
-  var count = 0,baseValue, value, date;
+  var count = 0, currentX = 100, baseValue, value, date, graphY;
 
   var allLines = allText.split(/\r\n|\n/);
 
   allLines = allLines.reverse();
+  var maximumPrice = maxPrice(allLines);
+  var minimumPrice = minPrice(allLines);
+
+  multiplier = 150 / (maximumPrice - minimumPrice);
+  maxHeight = Math.ceil(maximumPrice) * multiplier + multiplier;
 
   _.each(allLines, function(line) {
     if(line.length > 0) {
 
+     var values = line.split(/,/);
+     value = getClose(values[4], values[6]);
+
+     graphY = maxHeight - value;
+//alert(graphY);
+     drawLine(currentX, graphY, 10, 50);
+
+     currentX += 20;
      count++;
    }
 
