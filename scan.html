@@ -59,7 +59,8 @@ $(document).ready(function() {
 				   (((lastPrice - highs[highs.length - 1]) / highs[highs.length - 1]) < 0.03)
 				  )
 				*/
-				if(lows.length >= 2 && highs.length >= 2 &&
+				if(volume > 1500000 && trends[trends.length - 1] == "up" &&
+				   lows.length >= 2 && highs.length >= 2 &&
 				   lows[lows.length - 1] > lows[lows.length - 2] &&
 				   highs[highs.length - 1] > highs[highs.length -2])
 				{
