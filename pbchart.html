@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/paper.js"></script>
+<script type="text/javascript" src="js/purl.js"></script>
+<script type="text/javascript" src="js/opentip-jquery.js"></script>
+<link href="css/opentip.css" rel="stylesheet" type="text/css" />
+<link href="css/chart.css" rel="stylesheet" type="text/css" />
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+var maxHeight;
+var multiplier;
+
+$(document).ready(function() {
+    var url = $.url();
+    var symbol = url.param('symbol');
+
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "data/" + symbol + ".csv",
+        dataType: "text",
+        success: function(data) {
+          drawGraph(data);
+        }
+     });
+});
+
+function getClose(close, adjClose) {
+  var difference = Math.abs(close - adjClose);
+  var differencePercentage = (difference / close) * 100;
+  if(differencePercentage < 1) {
+    return close;
+  }
+  return adjClose;
+}
+
+function formatDate(dateString) {
+  var date = dateString.replace(/\"/g, "");
+  date = date.replace(/^20.../g, "");
+  date = date.replace(/-/g, '/');
+  return date;
+}
+
+function drawGraph(allText) {
+  var count = 0,baseValue, value, date;
+
+  var allLines = allText.split(/\r\n|\n/);
+
+  allLines = allLines.reverse();
+
+  _.each(allLines, function(line) {
+    if(line.length > 0) {
+
+     count++;
+   }
+
+  });
+};
+
+
+</script>
+</head>
+<body>
+    <div class="breakPoint"></div>
+    <canvas id="myCanvas" resize></canvas>
+    <div id="price-tooltip"></div>
+    <div data-ot="Shown after 2 seconds" data-ot-delay="2"></div>
+</body>
+</html>
