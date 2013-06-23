@@ -13,6 +13,7 @@
 <script type="text/paperscript" canvas="myCanvas">
 var maxHeight;
 var multiplier;
+var numLines = 2;
 
 $(document).ready(function() {
     var url = $.url();
@@ -68,7 +69,7 @@ function drawLine(left, top, x, y) {
 }
 
 function drawGraph(allText) {
-  var count = 0, currentX = 100, baseValue, value, date, graphY;
+  var count = 0, currentX = 100, value, date, graphY, highs = new Array(2);
 
   var allLines = allText.split(/\r\n|\n/);
 
@@ -87,6 +88,7 @@ function drawGraph(allText) {
 
      graphY = maxHeight - value;
 //alert(graphY);
+
      drawLine(currentX, graphY, 10, 50);
 
      currentX += 20;
