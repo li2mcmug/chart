@@ -1,9 +1,26 @@
-require "rubygems"
+#!/usr/bin/ruby
 
-# The part that activates bundler in your app:
-require "bundler/setup" 
 require 'mysql'
+require 'csv'
+require 'spreadsheet'
 
-client = Mysql::Client.new(:host => "localhost", :username => "root", :password => "comp0707")
+Spreadsheet.client_encoding = 'UTF-8'
 
+begin
+  CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/AAV.csv") do |row|
+    puts row
+    # use row here...
+  end
 
+  con = Mysql.new 'localhost', 'root', 'comp0707', 'stocks'
+  puts con.get_server_info
+  rs = con.query 'SELECT VERSION()'
+  puts rs.fetch_row    
+    
+rescue Mysql::Error => e
+  puts e.errno
+  puts e.error
+    
+ensure
+  con.close if con
+end
