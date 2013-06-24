@@ -7,9 +7,11 @@ require 'spreadsheet'
 Spreadsheet.client_encoding = 'UTF-8'
 
 begin
-  CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/AAV.csv") do |row|
-    puts row
-    # use row here...
+  CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/A.csv") do |row|
+    next if row[0].nil? || !row[0].match("Revenue.*Mil")
+    for i in 1..11
+      puts row[i].sub(',', '')
+    end
   end
 
   con = Mysql.new 'localhost', 'root', 'comp0707', 'stocks'
