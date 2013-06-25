@@ -14,9 +14,9 @@ begin
     puts file
     next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/#{file}")
     CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", {col_sep: ",", quote_char: "\x00"}) do |row|
-      symbol = file.split(".")[0]        
+      symbol = file.split(".")[0] 
 
-      break if row[0] && row[0].match("CAD")
+      break if (row[0] && row[0].match("CAD")) || file.split(".").size() > 2
 
       next if row[0].nil? || !row[0].match("Revenue.*Mil") 
       for i in 1..10
