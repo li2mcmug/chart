@@ -5,25 +5,32 @@ require 'csv'
 require 'spreadsheet'
 
 Spreadsheet.client_encoding = 'UTF-8'
-years = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012]
 
 con = Mysql.new 'localhost', 'root', 'comp0707', 'stocks'
 
 begin
   Dir.foreach("/home/li2mcmug/workspace/chart/morningstar") do |file|
     puts file
+    years = nil
+
     next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/#{file}")
     CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", {col_sep: ",", quote_char: "\x00"}) do |row|
-      symbol = file.split(".")[0] 
+      symbol = file.split(".")[0]
+puts row
+      if row.any?{|field| /201\d-/.match(field)}
+        years = row.map{|field| field.gsub(/-\d\d/,'')}
+      end
 
       break if (row[0] && row[0].match("CAD")) || file.split(".").size() > 2
 
-      next if row[0].nil? || !row[0].match("Revenue.*Mil") 
+      next if row[0].nil? || !row[0].match("Shares.*Mil") 
       for i in 1..10
         next if row[i].nil?
         row[i].sub!(',', '')
         amount = row[i].to_i * 1000000
-        rs = con.query "insert into symbols(symbol, year, revenue) values(\'#{symbol}\',#{years[i-1]},#{amount})"
+
+        query = "insert into symbols(symbol, year, shares) values(\'#{symbol}\',#{years[i]},#{amount}) on duplicate key update shares = #{amount}"
+        rs = con.query query
       end
     end
   end
