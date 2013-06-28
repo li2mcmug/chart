@@ -14,19 +14,23 @@ begin
     years = nil
 
     next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/#{file}")
-    CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", {col_sep: ",", quote_char: "\x00"}) do |row|
+    CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", { quote_char: "\x00"}) do |row|
       symbol = file.split(".")[0]
-puts row
+      row = row.join(',').gsub(/(?m),(?=[^"]*"(?:[^"\r\n]*"[^"]*")*[^"\r\n]*$)/,'')
+              .gsub(' ','').split(',')
+
       if row.any?{|field| /201\d-/.match(field)}
-        years = row.map{|field| field.gsub(/-\d\d/,'')}
+        years = row.map{|field| field ? field.gsub(/-\d\d/,'') : ''}
       end
 
       break if (row[0] && row[0].match("CAD")) || file.split(".").size() > 2
 
       next if row[0].nil? || !row[0].match("Shares.*Mil") 
+puts row if file == "NLY.csv"
       for i in 1..10
         next if row[i].nil?
         row[i].sub!(',', '')
+        row[i].sub!('"', '')
         amount = row[i].to_i * 1000000
 
         query = "insert into symbols(symbol, year, shares) values(\'#{symbol}\',#{years[i]},#{amount}) on duplicate key update shares = #{amount}"
