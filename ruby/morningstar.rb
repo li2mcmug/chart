@@ -7,9 +7,16 @@ require 'spreadsheet'
 Spreadsheet.client_encoding = 'UTF-8'
 
 con = Mysql.new 'localhost', 'root', 'comp0707', 'stocks'
-csv_to_field = {}
-csv_to_field["EarningsPerShare"] = "eps"
-csv_to_field["Share.*Mil"] = "shares"
+csv_to_field = {
+  "EarningsPerShare": "eps",
+  "Share.*Mil": "shares",
+  "Revenue.*Mil": "revenue"
+}
+multiples = {
+  "shares": 1000000,
+  "revenue": 1000000
+}
+
 
 begin
   Dir.foreach("/home/li2mcmug/workspace/chart/morningstar") do |file|
@@ -27,10 +34,6 @@ begin
 
       if row.any?{|field| /201\d-/.match(field)}
         years = row.map{|field| field ? field + "-01": ''}
-
-       # years.each do |year|
-       #   year_values[year] = []
-       # end
       end
 
       break if (row[0] && row[0].match("CAD")) || file.split(".").size() > 2
@@ -58,7 +61,10 @@ begin
       update_stmt = " on duplicate key update "
       year_values[year].each do |field_value|
 	column_name = field_value.first
-        column_value = field_value.last
+        column_value = field_value.last.to_f
+        if multiples.has_key?(column_name)
+          column_value *= multiples[column_name]
+        end
         insert_stmt += ", #{column_name}"
         value_stmt += ", #{column_value}"
         update_stmt += "#{column_name} = #{column_value}, "
