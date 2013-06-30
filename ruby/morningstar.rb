@@ -14,6 +14,7 @@ begin
     years = nil
 
     next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/#{file}")
+
     CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", { quote_char: "\x00"}) do |row|
       symbol = file.split(".")[0]
       row = row.join(',').gsub(/(?m),(?=[^"]*"(?:[^"\r\n]*"[^"]*")*[^"\r\n]*$)/,'')
@@ -25,15 +26,16 @@ begin
 
       break if (row[0] && row[0].match("CAD")) || file.split(".").size() > 2
 
-      next if row[0].nil? || !row[0].match("Shares.*Mil") 
-puts row if file == "NLY.csv"
+      next if row[0].nil? || !row[0].match("EarningsPerShare") 
+
       for i in 1..10
         next if row[i].nil?
         row[i].sub!(',', '')
         row[i].sub!('"', '')
-        amount = row[i].to_i * 1000000
+        amount = row[i].to_f
 
-        query = "insert into symbols(symbol, year, shares) values(\'#{symbol}\',#{years[i]},#{amount}) on duplicate key update shares = #{amount}"
+        query = "insert into symbols(symbol, year, eps) values(\'#{symbol}\',#{years[i]},#{amount}) on duplicate key update eps = #{amount}"
+puts query
         rs = con.query query
       end
     end
