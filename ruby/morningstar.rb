@@ -8,13 +8,20 @@ Spreadsheet.client_encoding = 'UTF-8'
 
 con = Mysql.new 'localhost', 'root', 'comp0707', 'stocks'
 csv_to_field = {
-  "EarningsPerShare": "eps",
-  "Share.*Mil": "shares",
-  "Revenue.*Mil": "revenue"
+  "Revenue.*Mil" => "revenue",
+  "GrossMargin.*%" => "gross_margin_percent",
+  "OperatingIncome.*Mil" => "operating_income",
+  "OperatingMargin.*%" => "operating_margin_percent",
+  "NetIncome.*Mil" => "net_income",
+  "EarningsPerShare" => "eps",
+  "Shares.*Mil" => "shares",
+  "BookValuePerShare" => "bvps"
 }
 multiples = {
-  "shares": 1000000,
-  "revenue": 1000000
+  "revenue" => 1000000,
+  "operating_income" => 1000000,
+  "net_income" => 1000000,
+  "shares" => 1000000
 }
 
 
