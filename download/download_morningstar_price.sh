@@ -19,7 +19,7 @@ else
     echo "${symbol}"
     rm -rf "data/${symbol}.csv"
 echo "http://performance.morningstar.com/Performance/stock/exportStockPrice.action?t=XNYS:${symbol}"
-    curl -o temp.csv "http://performance.morningstar.com/Performance/stock/exportStockPrice.action?t=XNAS:${symbol}"
+    curl -o temp.csv "http://performance.morningstar.com/Performance/stock/exportStockPrice.action?t=XNYS:${symbol}"
 
     file_size=$(stat -c %s temp.csv)
     echo $file_size
