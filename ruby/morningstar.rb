@@ -14,14 +14,25 @@ csv_to_field = {
   "OperatingMargin.*%" => "operating_margin_percent",
   "NetIncome.*Mil" => "net_income",
   "EarningsPerShare" => "eps",
+  "Dividends" => "dividends",
+  "PayoutRatio.*%" => "payout_ratio",
   "Shares.*Mil" => "shares",
-  "BookValuePerShare" => "bvps"
+  "BookValuePerShare" => "bvps",
+  "OperatingCashFlow.*Mil" => "operating_cash_flow",
+  "CapSpending.*Mil" => "cap_spending",
+  "FreeCashFlow.*Mil" => "free_cash_flow",
+  "FreeCashFlowPerShare" => "free_cash_flow_per_share",
+  "WorkingCapital.*Mil" => "working_capital"
 }
 multiples = {
   "revenue" => 1000000,
   "operating_income" => 1000000,
   "net_income" => 1000000,
-  "shares" => 1000000
+  "shares" => 1000000,
+  "operating_cash_flow" => 1000000,
+  "cap_spending" => 1000000,
+  "free_cash_flow" => 1000000,
+  "working_capital" => 1000000
 }
 
 

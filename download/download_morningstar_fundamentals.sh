@@ -18,7 +18,7 @@ else
     echo "${symbol}"
     rm -rf "data/${symbol}.csv"
     curl -o temp.csv "http://financials.morningstar.com/ajax/exportKR2CSV.html?t=${symbol}"
-    cat temp.csv > "morningstar/${symbol}.csv"
+    cat temp.csv > "morningstar/fundamentals/${symbol}.csv"
 
    rm -rf temp.csv
   done
