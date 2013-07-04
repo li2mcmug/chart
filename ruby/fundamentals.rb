@@ -37,15 +37,15 @@ multiples = {
 
 
 begin
-  Dir.foreach("/home/li2mcmug/workspace/chart/morningstar") do |file|
+  Dir.foreach("/home/li2mcmug/workspace/chart/morningstar/fundamentals") do |file|
     puts file
     years = nil
     symbol = nil
     year_values = {} 
 
-    next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/#{file}")
+    next if !file.match("csv") || File.directory?("/home/li2mcmug/workspace/chart/morningstar/fundamentals/#{file}")
 
-    CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/#{file}", { quote_char: "\x00"}) do |row|
+    CSV.foreach("/home/li2mcmug/workspace/chart/morningstar/fundamentals/#{file}", { quote_char: "\x00"}) do |row|
       symbol = file.split(".")[0]
       row = row.join(',').gsub(/(?m),(?=[^"]*"(?:[^"\r\n]*"[^"]*")*[^"\r\n]*$)/,'')
               .gsub(' ','').split(',')
