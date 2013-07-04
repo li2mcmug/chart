@@ -1,0 +1,7 @@
+select distinct symbol from symbols
+where (price * shares) > 1000000000
+and (price / bvps) <= 2.11
+and (price / free_cash_flow_per_share) < 7.50
+and price <= 15.80;
+
+
