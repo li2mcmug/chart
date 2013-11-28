@@ -11,7 +11,7 @@
     <div id="chart"></div>
 
     <script type="text/javascript">
-      var width = 900;
+      var width = 1250;
       var height = 500;
       String.prototype.format = function () {
           var formatted = this;
@@ -146,6 +146,9 @@
 
 
       function fetchData() {
+      	  var start_date = "2001-05-23";
+      	  var max_days = 100;
+
           result = new Array();
           $.ajax({
             type: "GET",
@@ -155,8 +158,10 @@
             success: function(content) {
               var lines = content.split(/\r\n|\n/);
               _.each(lines, function(line, i) {
-                var fields = line.split(",");
-                result[i] = {"timestamp": (new Date(fields[0]).getTime() / 1000), "date":fields[0],"Date":fields[0],"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
+                if(i < max_days) {
+                  var fields = line.split(",");
+                  result[i] = {"timestamp": (new Date(fields[0]).getTime() / 1000), "date":fields[0],"Date":fields[0],"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
+                }
               });
             }
           });
