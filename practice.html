@@ -158,6 +158,7 @@
           });
 
 
+          result = new Array();
           $.ajax({
             type: "GET",
             async: false,
@@ -166,13 +167,12 @@
             success: function(content) {
               var lines = content.split(/\r\n|\n/);
               _.each(lines, function(line, i) {
-
-
+                var fields = line.split(",");
+                result[i] = {"timestamp": (new Date(fields[0]).getTime() / 1000), "date":fields[0],"Date":fields[0],"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
               });
             }
           });
-
-          buildChart(data);
+          buildChart(result);
       }
 
       function buildQuery() {
