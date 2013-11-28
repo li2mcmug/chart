@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="css/jquery-ui.css">
     <script type="text/javascript" src="js/underscore.js"></script>
     <script type="text/javascript" src="js/d3.js"></script>
     <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
     <script type="text/javascript">
       var width = 1250;
       var height = 500;
@@ -15,8 +17,6 @@
           }
           return formatted;
       };
-
-      $( "#datepicker" ).datepicker();
 
       function min(a, b) {
           return a < b ? a : b;
@@ -173,6 +173,7 @@
 
 
       $(document).ready(function() {
+        $( "#datepicker" ).datepicker();
         fetchData();
       });
 
