@@ -5,11 +5,6 @@
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.25.0"></script>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.time.js?1.25.0"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-  </head>
-  <body>
-
-    <div id="chart"></div>
-
     <script type="text/javascript">
       var width = 1250;
       var height = 500;
@@ -35,6 +30,7 @@
       }
 
       function buildChart(data) {
+          $("#chart").empty();
 
           var margin = 50;
 
@@ -146,7 +142,8 @@
 
 
       function fetchData() {
-      	  var last_date = "2013-11-01";
+          var last_date = '2013-11-01';
+          var symbol = $("#symbol").val();
       	  var max_days = 180;
 
           result = new Array();
@@ -178,8 +175,21 @@
       }
 
 
-      $(document).ready(fetchData);
+      $(document).ready(function() {
+        fetchData();
+      });
 
     </script>
+
+  </head>
+  <body>
+    <div id="chart"></div>
+    <form>
+    	<label for"symbol">Symbol</label>
+    	<input type="text" id="symbol" name="symbol" />
+
+        <label for="date">Date</label>
+		<input onclick="fetchData();" type="text" name="date" />
+    </form>
   </body>
 </html>
