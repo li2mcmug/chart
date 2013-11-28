@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript" src="js/underscore.js"></script>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.25.0"></script>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.time.js?1.25.0"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -155,22 +156,22 @@
           data = data.sort(function (x, y) {
               return x.timestamp - y.timestamp;
           });
-          
-          
+
+
           $.ajax({
             type: "GET",
             async: false,
             url: "data/" + "AAPL" + ".csv",
             dataType: "text",
-            success: function(data) {
-              var lines = data.split(/\r\n|\n/);
-              _.each(lines, function(symbol) {
+            success: function(content) {
+              var lines = content.split(/\r\n|\n/);
+              _.each(lines, function(line, i) {
 
 
               });
             }
           });
-          
+
           buildChart(data);
       }
 
@@ -194,7 +195,6 @@
           scriptElement.type = "text/javascript";
           // i add to the url the call back function
 
-          alert(url);
           scriptElement.src = url;
           document.getElementsByTagName("HEAD")[0].appendChild(scriptElement);
       }
