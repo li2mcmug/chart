@@ -155,6 +155,22 @@
           data = data.sort(function (x, y) {
               return x.timestamp - y.timestamp;
           });
+          
+          
+          $.ajax({
+            type: "GET",
+            async: false,
+            url: "data/" + "AAPL" + ".csv",
+            dataType: "text",
+            success: function(data) {
+              var lines = data.split(/\r\n|\n/);
+              _.each(lines, function(symbol) {
+
+
+              });
+            }
+          });
+          
           buildChart(data);
       }
 
