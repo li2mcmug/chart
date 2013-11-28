@@ -146,8 +146,8 @@
 
 
       function fetchData() {
-      	  var start_date = "2001-05-23";
-      	  var max_days = 100;
+      	  var last_date = "2013-11-01";
+      	  var max_days = 180;
 
           result = new Array();
           $.ajax({
@@ -157,11 +157,20 @@
             dataType: "text",
             success: function(content) {
               var lines = content.split(/\r\n|\n/);
-              _.each(lines, function(line, i) {
-                if(i < max_days) {
-                  var fields = line.split(",");
-                  result[i] = {"timestamp": (new Date(fields[0]).getTime() / 1000), "date":fields[0],"Date":fields[0],"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
+              var i = 0, found = false;
+              _.each(lines, function(line) {
+                var fields = line.split(",");
+                date = fields[0];
+
+                if(date == last_date) {
+                  found = true;
                 }
+
+                if(found && i < max_days) {
+                  result[i] = {"timestamp": (new Date(date).getTime() / 1000), "date":date,"Date":date,"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
+                  i = i + 1;
+                }
+
               });
             }
           });
