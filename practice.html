@@ -16,9 +16,7 @@
           return formatted;
       };
 
-      var end = new Date();
-      var start = new Date(end.getTime() - 1000 * 60 * 60 * 24 * 60);
-      var data = [];
+      $( "#datepicker" ).datepicker();
 
       function min(a, b) {
           return a < b ? a : b;
@@ -188,7 +186,7 @@
     	<input type="text" id="symbol" name="symbol" />
 
         <label for="date">Date</label>
-		<input onclick="fetchData();" type="text" name="date" />
+		<input onclick="fetchData();" type="text" name="date" id="datepicker" />
     </form>
   </body>
 </html>
