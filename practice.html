@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="css/practice.css">
     <link rel="stylesheet" href="css/jquery-ui.css">
     <script type="text/javascript" src="js/underscore.js"></script>
     <script type="text/javascript" src="js/d3.js"></script>
@@ -9,6 +10,8 @@
     <script type="text/javascript">
       var width = 1250;
       var height = 500;
+      var tradingDays;
+
       String.prototype.format = function () {
           var formatted = this;
           for (var i = 0; i < arguments.length; i++) {
@@ -25,6 +28,10 @@
       function max(a, b) {
           return a > b ? a : b;
       }
+
+	  function nextTradingDay(data) {
+
+	  }
 
       function buildChart(data) {
           $("#chart").empty();
@@ -137,22 +144,22 @@
 
       }
 
-
       function fetchData() {
-          var last_date = '2013-11-01';
+          var last_date = $("#datepicker").val();
           var symbol = $("#symbol").val();
       	  var max_days = 180;
 
-          result = new Array();
+          var result = new Array();
+          tradingDays = new Array();
           $.ajax({
             type: "GET",
             async: false,
-            url: "data/" + "AAPL" + ".csv",
+            url: "data/" + symbol + ".csv",
             dataType: "text",
             success: function(content) {
               var lines = content.split(/\r\n|\n/);
               var i = 0, found = false;
-              _.each(lines, function(line) {
+              _.each(lines, function(line, line_num) {
                 var fields = line.split(",");
                 date = fields[0];
 
@@ -163,7 +170,9 @@
                 if(found && i < max_days) {
                   result[i] = {"timestamp": (new Date(date).getTime() / 1000), "date":date,"Date":date,"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
                   i = i + 1;
+
                 }
+                tradingDays[line_num] = date;
 
               });
             }
@@ -173,8 +182,8 @@
 
 
       $(document).ready(function() {
-        $( "#datepicker" ).datepicker();
-        fetchData();
+          $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+          fetchData();
       });
 
     </script>
@@ -183,11 +192,13 @@
   <body>
     <div id="chart"></div>
     <form>
-    	<label for"symbol">Symbol</label>
-    	<input type="text" id="symbol" name="symbol" />
+      <div class="setting">
+        <label for"symbol" class="setting_label">Symbol</label>
+        <input type="text" id="symbol" name="symbol" />
 
-        <label for="date">Date</label>
-		<input onclick="fetchData();" type="text" name="date" id="datepicker" />
+        <label for="date" class="setting_label">Date</label>
+		<input onchange="fetchData();" type="text" name="date" id="datepicker" />
+	  </div>
     </form>
   </body>
 </html>
