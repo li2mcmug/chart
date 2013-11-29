@@ -1,20 +1,41 @@
+.practice {
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .setting {
-  align: center;  
+  margin-left: 30px;
+}
+
+.price {
+  font-weight: normal;
+}
+
+.order {
+  margin: 10px 60px;
+  padding: 10px 0;
+  border:1px dotted;
 }
 
 .setting_label {
   font-family: Arial;
-  margin-left: 60px;
+  margin-left: 10px;
   font-weight: bold;
   font-size: 16px;
 }
 
-.setting_field {
+
+.setting_field, .order_field {
   font-size: 16px;
 }
 
-#next_button {
-  margin-left: 50px;
+.order_field {
+  margin-left: 20px;
+}
+
+#next_day, #submit_order {
+  margin-left: 30px;
+  margin-right: 20px;
   padding: 0 30px;
   font-size: 20px;
 }

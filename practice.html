@@ -10,7 +10,8 @@
     <script type="text/javascript">
       var width = 1250;
       var height = 500;
-      var tradingDates = new Array();
+      var open, close, high, low, order_type, order_price_type, order_price, tradingDates = new Array();
+      var stock_ownership, stock_cost;
 
       String.prototype.format = function () {
           var formatted = this;
@@ -172,9 +173,16 @@
                   found = true;
                 }
 
-                if(found && i < max_days) {
+                if(found && i <= max_days) {
                   result[i] = {"timestamp": (new Date(date).getTime() / 1000), "date":date,"Date":date,"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
                   i = i + 1;
+
+                  if(i == max_days) {
+                    open = fields[1];
+                    high = fields[2];
+                    low = fields[3];
+                    close = fields[4];
+                  }
 
                 }
                 tradingDates[line_num] = date;
@@ -182,13 +190,80 @@
               });
             }
           });
+
+          updatePrices();
           buildChart(result);
+          triggerOrder();
       }
+
+      function executeOrder(ownership, cost)
+      {
+          stock_ownership = ownership;
+          stock_cost = cost;
+      }
+
+      function triggerOrder() {
+          if(_.isUndefined(order_price)) { return; }
+
+          if(order_type == "buy") {
+              if(order_price_type == "stop") {
+                  if(open >= price) {
+                      executeOrder("long", open);
+                  }
+                  else if(high >= price) {
+                      executeOrder("long", price);
+                  }
+              } else if(order_price_type == "limit") {
+                  if(open <= price) {
+                      executeOrder("long", open);
+                  }
+                  else if(low <= price) {
+                      executeOrder("long", price);
+                  }
+              } else if(order_price_type == "market") {
+                  executeOrder("long", open);
+              }
+          }
+          else if(order_type == "sell") {
+              if(order_price_type == "stop") {
+                  if(open <= price) {
+                      executeOrder("short", open);
+                  }
+                  else if(low <= price) {
+                      executeOrder("short", price);
+                  }
+              } else if(order_price_type == "limit") {
+                  if(open >= price) {
+                      executeOrder("short", open);
+                  }
+                  else if(high >= price) {
+                      executeOrder("short", price);
+                  }
+              } else if(order_price_type == "market") {
+                  executeOrder("short", open);
+              }
+          }
+
+      }
+
+      function updatePrices() {
+          $("#open").html(open);
+       	  $("#close").html(close);
+      	  $("#high").html(high);
+      	  $("#low").html(low);
+      }
+
 
 	  function moveToNextDate() {
 	      var nextDate = nextTradingDay($("#datepicker").val());
           $("#datepicker").val(nextDate);
           fetchData();
+	  }
+
+	  function placeOrder() {
+          order_type = $("#order_type").val();
+          order_price_type = $("#price_type").val();
+          order_price = $("#price").val();
 	  }
 
       $(document).ready(function() {
@@ -199,7 +274,7 @@
     </script>
 
   </head>
-  <body>
+  <body class="practice">
     <div id="chart"></div>
     <form>
       <div class="setting">
@@ -215,7 +290,24 @@
         <label for="date" class="setting_label">Date</label>
 		<input onchange="fetchData();" type="text" name="date" id="datepicker" class="setting_field" />
 
-		<button onclick="moveToNextDate();" type="button" id="next_button">Next</button>
+		<button onclick="moveToNextDate();" type="button" id="next_day">Next</button>
+
+		Open: <span class="price" id="open"></span>, High: <span class="price" id="high"></span>, Low: <span class="price" id="low"></span>, Close: <span class="price" id="close"></span>
+
+	  </div>
+	  <div class="order">
+        <select id="order_type" class="order_field">
+          <option value="buy" selected>Buy</option>
+          <option value="sell">Sell</option>
+        </select>
+        <select id="price_type" class="order_field">
+          <option value="stop" selected>Stop</option>
+          <option value="limit">Limit</option>
+          <option value="market">Market</option>
+        </select>
+        @
+        <input type="text" id="price" class="order_field" />
+        <button onclick="placeOrder();") type="button" id="submit_order">Submit</button>
 	  </div>
     </form>
   </body>
