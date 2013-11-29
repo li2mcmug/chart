@@ -1,5 +1,5 @@
 .practice {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -7,14 +7,18 @@
   margin-left: 30px;
 }
 
-.price {
+.price, .position {
   font-weight: normal;
 }
 
 .order {
-  margin: 10px 60px;
+  margin: 10px 30px;
   padding: 10px 0;
   border:1px dotted;
+}
+
+.trades {
+  margin: 10px 60px;
 }
 
 .setting_label {
@@ -33,9 +37,18 @@
   margin-left: 20px;
 }
 
+#pending_position {
+  margin-left: 60px;
+}
+
 #next_day, #submit_order {
-  margin-left: 30px;
+  margin-left: 10px;
   margin-right: 20px;
-  padding: 0 30px;
+  padding: 0 25px;
   font-size: 20px;
+}
+
+#txns {
+  margin-left: 20px;
+  font-weight: normal;
 }

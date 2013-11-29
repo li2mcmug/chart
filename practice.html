@@ -8,10 +8,10 @@
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
     <script type="text/javascript">
-      var width = 1250;
+      var width = 1150;
       var height = 500;
       var open, close, high, low, order_type, order_price_type, order_price, tradingDates = new Array();
-      var stock_ownership, stock_cost;
+      var stock_ownership, stock_cost, trades = new Array();
 
       String.prototype.format = function () {
           var formatted = this;
@@ -167,6 +167,7 @@
               var i = 0, found = false;
               _.each(lines, function(line, line_num) {
                 var fields = line.split(",");
+
                 date = fields[0];
 
                 if(date == last_date) {
@@ -175,18 +176,18 @@
 
                 if(found && i <= max_days) {
                   result[i] = {"timestamp": (new Date(date).getTime() / 1000), "date":date,"Date":date,"Open":fields[1],"High":fields[2],"Low":fields[3],"Close":fields[4],"Volume":fields[5],"Adj_Close":fields[6]};
-                  i = i + 1;
 
-                  if(i == max_days) {
-                    open = fields[1];
-                    high = fields[2];
-                    low = fields[3];
-                    close = fields[4];
-                  }
+                if(i == 0) {
+                  open = fields[1];
+                  high = fields[2];
+                  low = fields[3];
+                  close = fields[4];
+                }
+
+                  i = i + 1;
 
                 }
                 tradingDates[line_num] = date;
-
               });
             }
           });
@@ -194,12 +195,58 @@
           updatePrices();
           buildChart(result);
           triggerOrder();
+          refreshOpenPosition();
+          refreshTxns();
       }
+
+      function refreshTxns() {
+          $("#txns").empty("");
+          _.each(trades, function(trade) {
+		      $("#txns").prepend("<li>" + trade + "</li>");
+          })
+      }
+
+	  function refreshOpenPosition() {
+          $("#stock_ownership").html(stock_ownership);
+          $("#stock_cost").html(stock_cost);
+	  }
 
       function executeOrder(ownership, cost)
       {
-          stock_ownership = ownership;
-          stock_cost = cost;
+          if(ownership == "short") {
+              if(stock_ownership == "long") {
+                  var profit = (cost - stock_cost) / stock_cost * 100;
+                  var txn = "Bought at " + stock_cost + ". Sold at " + cost + ". Profit = " + profit.toFixed(2) + "%";
+                  trades.push(txn);
+                  stock_ownership = null;
+                  stock_cost = null;
+
+              } else {
+                  stock_ownership = ownership;
+                  stock_cost = cost;
+              }
+          }
+
+          if(ownership == "long") {
+              if(stock_ownership == "short") {
+   	              var profit = (stock_cost - cost) / stock_cost * 100;
+   	              var txn = "Sold at " + stock_cost + ". Bought at " + cost + ". Profit = " + profit.toFixed(2) + "%";
+   	              trades.push(txn);
+   	              stock_ownership = null;
+	              stock_cost = null;
+              } else {
+                  stock_ownership = ownership;
+                  stock_cost = cost;
+              }
+          }
+
+          order_type = null;
+          order_price_type = null;
+          order_price = null;
+
+          $("#pending_order_type").html("");
+          $("#pending_order_price_type").html("");
+          $("#pending_order_price").html("");
       }
 
       function triggerOrder() {
@@ -207,18 +254,18 @@
 
           if(order_type == "buy") {
               if(order_price_type == "stop") {
-                  if(open >= price) {
+                  if(open >= order_price) {
                       executeOrder("long", open);
                   }
-                  else if(high >= price) {
-                      executeOrder("long", price);
+                  else if(high >= order_price) {
+                      executeOrder("long", order_price);
                   }
               } else if(order_price_type == "limit") {
-                  if(open <= price) {
+                  if(open <= order_price) {
                       executeOrder("long", open);
                   }
-                  else if(low <= price) {
-                      executeOrder("long", price);
+                  else if(low <= order_price) {
+                      executeOrder("long", order_price);
                   }
               } else if(order_price_type == "market") {
                   executeOrder("long", open);
@@ -226,18 +273,18 @@
           }
           else if(order_type == "sell") {
               if(order_price_type == "stop") {
-                  if(open <= price) {
+                  if(open <= order_price) {
                       executeOrder("short", open);
                   }
-                  else if(low <= price) {
-                      executeOrder("short", price);
+                  else if(low <= order_price) {
+                      executeOrder("short", order_price);
                   }
               } else if(order_price_type == "limit") {
-                  if(open >= price) {
+                  if(open >= order_price) {
                       executeOrder("short", open);
                   }
-                  else if(high >= price) {
-                      executeOrder("short", price);
+                  else if(high >= order_price) {
+                      executeOrder("short", order_price);
                   }
               } else if(order_price_type == "market") {
                   executeOrder("short", open);
@@ -264,6 +311,10 @@
           order_type = $("#order_type").val();
           order_price_type = $("#price_type").val();
           order_price = $("#price").val();
+
+          $("#pending_order_type").html(order_type);
+          $("#pending_order_price_type").html(order_price_type);
+          $("#pending_order_price").html(order_price);
 	  }
 
       $(document).ready(function() {
@@ -309,6 +360,12 @@
         <input type="text" id="price" class="order_field" />
         <button onclick="placeOrder();") type="button" id="submit_order">Submit</button>
 	  </div>
+	  <div class="trades">
+		<span id="open_position">Open Position: <span id="stock_ownership" class="position"></span> <span id="stock_cost" class="position"></span></span>
+		<span id="pending_position">Pending Position: <span id="pending_order_type" class="position"></span> <span id="pending_order_price_type" class="position"></span> @ <span id="pending_order_price" class="position"></span></span>
+	  </div>
+	  <ol id="txns">
+	  </ol>
     </form>
   </body>
 </html>
