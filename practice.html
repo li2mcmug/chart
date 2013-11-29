@@ -146,7 +146,14 @@
               .attr("stroke", function (d) {
                   return d.Open > d.Close ? "red" : "green";
               })
+             .on("mouseover", function(d) {
+                  $("#open").html(d.Open);
+			      $("#close").html(d.Close);
+			      $("#high").html(d.High);
+      	          $("#low").html(d.Low);
 
+                  return tooltip.style("visibility", "visible");
+              })
       }
 
       function loadSymbols() {
@@ -235,7 +242,7 @@
           if(ownership == "short") {
               if(stock_ownership == "long") {
                   var profit = (cost - stock_cost) / stock_cost * 100;
-                  var txn = "Bought at " + stock_cost + ". Sold at " + cost + ". Profit = " + profit.toFixed(2) + "%";
+                  var txn = $("#symbol").val().toUpperCase() + ": Bought at " + stock_cost + ". Sold at " + cost + ". Profit = " + profit.toFixed(2) + "%";
                   trades.push(txn);
                   stock_ownership = null;
                   stock_cost = null;
@@ -249,7 +256,7 @@
           if(ownership == "long") {
               if(stock_ownership == "short") {
    	              var profit = (stock_cost - cost) / stock_cost * 100;
-   	              var txn = "Sold at " + stock_cost + ". Bought at " + cost + ". Profit = " + profit.toFixed(2) + "%";
+   	              var txn = $("#symbol").val().toUpperCase() + ": Sold at " + stock_cost + ". Bought at " + cost + ". Profit = " + profit.toFixed(2) + "%";
    	              trades.push(txn);
    	              stock_ownership = null;
 	              stock_cost = null;
@@ -332,8 +339,10 @@
           order_price = $("#price").val();
 
           $("#pending_order_type").html(order_type);
-          $("#pending_order_price_type").html(order_price_type);
-          $("#pending_order_price").html(order_price);
+          if(order_type != "none") {
+              $("#pending_order_price_type").html(order_price_type);
+              $("#pending_order_price").html(order_price);
+          }
 	  }
 
       $(document).ready(function() {
@@ -350,7 +359,7 @@
     <form>
       <div class="setting">
         <label for="symbol" class="setting_label">Symbol</label>
-        <input type="text" id="symbol" name="symbol" class="setting_field" />
+        <input type="text" id="symbol" name="symbol" class="setting_field" onkeyup="fetchData();"/>
 
         <label for="view" class="setting_label">View</label>
         <select id="view" name="view" onchange="fetchData();">
@@ -367,18 +376,18 @@
 
 	  </div>
 	  <div class="order">
-        <select id="order_type" class="order_field">
-          <option value="buy" selected>Buy</option>
+        <select id="order_type" onchange="placeOrder();" class="order_field">
+          <option value="buy">Buy</option>
           <option value="sell">Sell</option>
+          <option value="none" selected>None</option>
         </select>
-        <select id="price_type" class="order_field">
+        <select id="price_type" onchange="placeOrder();" class="order_field">
           <option value="stop" selected>Stop</option>
           <option value="limit">Limit</option>
           <option value="market">Market</option>
         </select>
-        @
-        <input type="text" id="price" class="order_field" />
-        <button onclick="placeOrder();") type="button" id="submit_order">Submit</button>
+        &nbsp;&nbsp;&nbsp;@
+        <input type="text" id="price" class="order_field" onchange="placeOrder();" />
 	  </div>
 	  <div class="trades">
 		<span id="open_position">Open Position: <span id="stock_ownership" class="position"></span> <span id="stock_cost" class="position"></span></span>
