@@ -52,3 +52,5 @@
   margin-left: 20px;
   font-weight: normal;
 }
+
+.ui-autocomplete { max-height: 80px; overflow-y: auto; overflow-x: hidden;}

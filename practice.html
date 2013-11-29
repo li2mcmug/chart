@@ -11,7 +11,7 @@
       var width = 1150;
       var height = 500;
       var open, close, high, low, order_type, order_price_type, order_price, tradingDates = new Array();
-      var stock_ownership, stock_cost, trades = new Array();
+      var stock_ownership, stock_cost, trades = new Array(), symbols = new Array();;
 
       String.prototype.format = function () {
           var formatted = this;
@@ -147,6 +147,25 @@
                   return d.Open > d.Close ? "red" : "green";
               })
 
+      }
+
+      function loadSymbols() {
+          $.ajax({
+	          type: "GET",
+	          async: false,
+	          url: "config/symbol_list.txt",
+	          dataType: "text",
+	          success: function(symbol_data) {
+	              var symbol_lines = symbol_data.split(/\r\n|\n/);
+	              _.each(symbol_lines, function(symbol, i) {
+                      symbols[i] = symbol;
+                  });
+              }
+          });
+
+          $( "#symbol" ).autocomplete({
+		      source: symbols
+          });
       }
 
       function fetchData() {
@@ -319,6 +338,7 @@
 
       $(document).ready(function() {
           $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+          loadSymbols();
           fetchData();
       });
 
