@@ -10,7 +10,7 @@
     <script type="text/javascript">
       var width = 1250;
       var height = 500;
-      var tradingDays;
+      var tradingDates = new Array();
 
       String.prototype.format = function () {
           var formatted = this;
@@ -29,8 +29,12 @@
           return a > b ? a : b;
       }
 
-	  function nextTradingDay(data) {
-
+	  function nextTradingDay(date) {
+          for (var i = 0; i < tradingDates.length; i++) {
+              if(date == tradingDates[i]) {
+                  return tradingDates[i-1];
+              }
+          }
 	  }
 
       function buildChart(data) {
@@ -147,10 +151,11 @@
       function fetchData() {
           var last_date = $("#datepicker").val();
           var symbol = $("#symbol").val();
-      	  var max_days = 180;
+      	  var max_days = $("#view").val();
 
           var result = new Array();
-          tradingDays = new Array();
+          tradingDates = new Array();
+
           $.ajax({
             type: "GET",
             async: false,
@@ -172,7 +177,7 @@
                   i = i + 1;
 
                 }
-                tradingDays[line_num] = date;
+                tradingDates[line_num] = date;
 
               });
             }
@@ -180,9 +185,14 @@
           buildChart(result);
       }
 
+	  function moveToNextDate() {
+	      var nextDate = nextTradingDay($("#datepicker").val());
+          $("#datepicker").val(nextDate);
+          fetchData();
+	  }
 
       $(document).ready(function() {
-          $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+          $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
           fetchData();
       });
 
@@ -193,11 +203,19 @@
     <div id="chart"></div>
     <form>
       <div class="setting">
-        <label for"symbol" class="setting_label">Symbol</label>
-        <input type="text" id="symbol" name="symbol" />
+        <label for="symbol" class="setting_label">Symbol</label>
+        <input type="text" id="symbol" name="symbol" class="setting_field" />
+
+        <label for="view" class="setting_label">View</label>
+        <select id="view" name="view" onchange="fetchData();">
+          <option value="130" selected>6 Months</option>
+          <option value="260">1 Year</option>
+        </select>
 
         <label for="date" class="setting_label">Date</label>
-		<input onchange="fetchData();" type="text" name="date" id="datepicker" />
+		<input onchange="fetchData();" type="text" name="date" id="datepicker" class="setting_field" />
+
+		<button onclick="moveToNextDate();" type="button" id="next_button">Next</button>
 	  </div>
     </form>
   </body>
