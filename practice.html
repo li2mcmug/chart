@@ -233,6 +233,15 @@
       }
 
 	  function refreshOpenPosition() {
+	      var profit_loss;
+	      if(stock_cost != null) {
+	          profit_loss = (stock_cost - close) / stock_cost * 100;
+	          $("#profit_loss").html(profit_loss.toFixed(2) + "%");
+	      } else {
+	          $("#profit_loss").empty();
+	      }
+
+
           $("#stock_ownership").html(stock_ownership);
           $("#stock_cost").html(stock_cost);
 	  }
@@ -390,7 +399,7 @@
         <input type="text" id="price" class="order_field" onchange="placeOrder();" />
 	  </div>
 	  <div class="trades">
-		<span id="open_position">Open Position: <span id="stock_ownership" class="position"></span> <span id="stock_cost" class="position"></span></span>
+		<span id="open_position">Open Position: <span id="stock_ownership" class="position"></span> <span id="stock_cost" class="position"></span></span> <span id="profit_loss" class="position"></span
 		<span id="pending_position">Pending Position: <span id="pending_order_type" class="position"></span> <span id="pending_order_price_type" class="position"></span> @ <span id="pending_order_price" class="position"></span></span>
 	  </div>
 	  <ol id="txns">

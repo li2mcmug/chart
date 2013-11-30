@@ -48,6 +48,10 @@
   font-size: 20px;
 }
 
+#profit_loss {
+  margin: 0 30px;
+}
+
 #txns {
   margin-left: 20px;
   font-weight: normal;
